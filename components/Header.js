@@ -6,6 +6,21 @@ import { useMediaQuery } from '@react-hook/media-query';
 import MobileNav from './MobileNav';
 import ThemeToggle from './ThemeToggle';
 import DatePicker from './DatePicker';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuPortal,
+	DropdownMenuSeparator,
+	DropdownMenuShortcut,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
+} from './components/ui/dropdown-menu';
+import { Button } from './components/ui/button';
 
 const Header = ({ placeholder }) => {
 	const router = useRouter();
@@ -198,10 +213,29 @@ const Header = ({ placeholder }) => {
 					<a href='#' className='globe'>
 						<Globe />
 					</a>
-					<div className='user'>
-						<Menu className='menu' />
-						<User className='userIcon' />
-					</div>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+							<div className='user'>
+								<Menu className='menu' />
+								<User className='userIcon' />
+							</div>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent className='w-56'>
+							<DropdownMenuLabel>My Account</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+							<DropdownMenuGroup>
+								<DropdownMenuItem>
+									Profile
+									<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+								</DropdownMenuItem>
+							</DropdownMenuGroup>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem>
+								Log out
+								<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 				{/* Mobile Nav */}
 				<MobileNav />
