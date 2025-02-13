@@ -1,9 +1,11 @@
 import Head from 'next/head';
 import React from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AuthLayout = ({ children }) => {
 	return (
-		<div className='min-h-screen flex items-center justify-center bg-gray-100'>
+		<div className='flex items-center justify-center min-h-screen bg-gray-100'>
 			<Head>
 				<title>Airbnb: Incredible Places to Stay and Things to Do</title>
 				<meta
@@ -12,7 +14,10 @@ const AuthLayout = ({ children }) => {
 				/>
 				<link rel='icon' href='images/logo.svg' />
 			</Head>
-			<div className='bg-white p-8 rounded-xl shadow-xl w-full max-w-md'>{children}</div>
+			<div className='w-full max-w-md p-8 bg-white shadow-xl rounded-xl'>
+				{children}
+				<ToastContainer />
+			</div>
 		</div>
 	);
 };

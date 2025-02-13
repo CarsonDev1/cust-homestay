@@ -3,7 +3,8 @@ import NProgress from 'nprogress';
 import Router from 'next/router';
 import 'nprogress/nprogress.css';
 import '../styles/globals.css';
-import Header from '@/components/Header';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 NProgress.configure({ showSpinner: false });
 Router.events.on('routeChangeStart', () => NProgress.start());
@@ -22,6 +23,7 @@ const App = ({ Component, pageProps }) => {
 				<link rel='icon' href='images/logo.svg' />
 			</Head>
 			<Component {...pageProps} />
+			<ToastContainer />
 		</>
 	);
 };

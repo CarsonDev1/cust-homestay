@@ -8,8 +8,15 @@ import { Label } from '@/components/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 export default function LoginForm() {
+	const [loading, setLoading] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
+	const router = useRouter();
+
 	const {
 		register,
 		handleSubmit,
@@ -17,6 +24,7 @@ export default function LoginForm() {
 	} = useForm();
 
 	const onSubmit = async (data) => {
+		setLoading(true);
 		try {
 			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/login', {
 				method: 'POST',
@@ -27,22 +35,27 @@ export default function LoginForm() {
 			});
 
 			if (response.ok) {
-				alert('Login successful!');
+				toast.success('Login successful! Redirecting to...');
+				setTimeout(() => {
+					router.push('/');
+				}, 2000);
 			} else {
 				const errorData = await response.json();
 				console.error('Login failed:', errorData);
-				alert(`Login failed: ${errorData.message || 'Unknown error'}`);
+				toast.error(`Login failed: ${errorData.message || 'Unknown error'}`);
 			}
 		} catch (error) {
 			console.error('Error:', error);
 			alert('An error occurred. Please try again later.');
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	return (
-		<div className='flex justify-center items-center h-dvh relative bg-gray-100 p-4'>
+		<div className='relative flex items-center justify-center p-4 bg-gray-100 h-dvh'>
 			<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
-			<Card className='w-full max-w-xl relative z-50 bg-white/80'>
+			<Card className='relative z-50 w-full max-w-xl bg-white/80'>
 				<CardHeader>
 					<CardTitle>Login</CardTitle>
 					<CardDescription>Sign in to your account.</CardDescription>
@@ -64,26 +77,35 @@ export default function LoginForm() {
 								className='border border-black'
 								placeholder='john@example.com'
 							/>
-							{errors.email && <p className='text-red-500 text-sm'>{errors.email.message}</p>}
+							{errors.email && <p className='text-sm text-red-500'>{errors.email.message}</p>}
 						</div>
 						<div className='space-y-2'>
 							<Label htmlFor='password'>Password</Label>
-							<Input
-								id='password'
-								type='password'
-								{...register('password', {
-									required: 'Password is required',
-									minLength: {
-										value: 8,
-										message: 'Password must be at least 8 characters long',
-									},
-								})}
-								className='border border-black'
-								placeholder='*******'
-							/>
-							{errors.password && <p className='text-red-500 text-sm'>{errors.password.message}</p>}
+							<div className='relative'>
+								<Input
+									id='password'
+									type={showPassword ? 'text' : 'password'}
+									{...register('password', {
+										required: 'Password is required',
+										minLength: {
+											value: 8,
+											message: 'Password must be at least 8 characters long',
+										},
+									})}
+									className='pr-10 border border-black'
+									placeholder='*******'
+								/>
+								<button
+									type='button'
+									onClick={() => setShowPassword(!showPassword)}
+									className='absolute inset-y-0 flex items-center right-3'
+								>
+									{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+								</button>
+							</div>
+							{errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
 						</div>
-						<div className='text-center mt-4'>
+						<div className='mt-4 text-center'>
 							<p>
 								Don't have an account?{' '}
 								<Link href='/auth/register'>
@@ -93,8 +115,8 @@ export default function LoginForm() {
 						</div>
 					</CardContent>
 					<CardFooter>
-						<Button type='submit' className='w-full'>
-							Login
+						<Button type='submit' className='w-full' disabled={loading}>
+							{loading ? 'Logging in...' : 'Login'}
 						</Button>
 					</CardFooter>
 				</form>
