@@ -115,7 +115,7 @@ export default function RegisterForm() {
 							/>
 							{errors.phone && <p className='text-sm text-red-500'>{errors.phone.message}</p>}
 						</div>
-						{/* <div className='space-y-2'>
+						<div className='space-y-2'>
 							<Label htmlFor='address'>Address</Label>
 							<Textarea
 								id='address'
@@ -124,7 +124,7 @@ export default function RegisterForm() {
 								className='border border-black'
 							/>
 							{errors.address && <p className='text-sm text-red-500'>{errors.address.message}</p>}
-						</div> */}
+						</div>
 						<div className='relative'>
 							<Label htmlFor='password'>Password</Label>
 							<Input
