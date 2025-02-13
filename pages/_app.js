@@ -15,7 +15,7 @@ const App = ({ Component, pageProps }) => {
 	return (
 		<>
 			<Head>
-				<title>Airbnb: Incredible Places to Stay and Things to Do</title>
+				<title>Runa: Incredible Places to Stay and Things to Do</title>
 				<meta
 					name='description'
 					content='Find holiday rentals, cabins, beach houses, unique homes and experiences around the world – all made possible by Hosts on Airbnb.'
