@@ -5,6 +5,8 @@ import 'nprogress/nprogress.css';
 import '../styles/globals.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AuthProvider } from 'context/AuthProvider';
+import Provider from 'utils/Provider';
 
 NProgress.configure({ showSpinner: false });
 Router.events.on('routeChangeStart', () => NProgress.start());
@@ -13,7 +15,7 @@ Router.events.on('routeChangeComplete', () => NProgress.done());
 
 const App = ({ Component, pageProps }) => {
 	return (
-		<>
+		<div className='h-full'>
 			<Head>
 				<title>Runa: Incredible Places to Stay and Things to Do</title>
 				<meta
@@ -22,9 +24,13 @@ const App = ({ Component, pageProps }) => {
 				/>
 				<link rel='icon' href='images/logo.svg' />
 			</Head>
-			<Component {...pageProps} />
+			<Provider>
+				<AuthProvider>
+					<Component {...pageProps} />
+				</AuthProvider>
+			</Provider>
 			<ToastContainer />
-		</>
+		</div>
 	);
 };
 

@@ -11,11 +11,13 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { jwtDecode } from 'jwt-decode';
 
 export default function LoginForm() {
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const router = useRouter();
+	const [dataAuth, setDataAuth] = useState();
 
 	const {
 		register,
@@ -33,11 +35,24 @@ export default function LoginForm() {
 				},
 				body: JSON.stringify(data),
 			});
+			const responseData = await response.json();
 
 			if (response.ok) {
+				const accessToken = responseData.accessToken;
+				localStorage.setItem('accessToken', accessToken);
+				const decoded = jwtDecode(accessToken);
+				const role = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+				console.log('User Role:', role);
+				setDataAuth(decoded);
 				toast.success('Login successful! Redirecting to...');
 				setTimeout(() => {
-					router.push('/');
+					if (role === 'Admin') {
+						router.push('/admin');
+					} else if (role === 'Manager') {
+						router.push('/manager');
+					} else {
+						router.push('/');
+					}
 				}, 2000);
 			} else {
 				const errorData = await response.json();
@@ -51,6 +66,8 @@ export default function LoginForm() {
 			setLoading(false);
 		}
 	};
+
+	console.log(dataAuth);
 
 	return (
 		<div className='relative flex items-center justify-center p-4 bg-gray-100 h-dvh'>
