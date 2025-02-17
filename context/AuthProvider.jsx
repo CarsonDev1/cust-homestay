@@ -1,6 +1,7 @@
 'use client';
-// import { getAccount } from '@/app/api/getProfile';
 import { useQuery } from '@tanstack/react-query';
+import { getUserInfo } from 'api/auth/getMe';
+import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Provider from 'utils/Provider';
@@ -26,32 +27,46 @@ export const AuthProvider = ({ children }) => {
 			localStorage.removeItem('accessToken');
 			localStorage.removeItem('refreshToken');
 			setIsAuthenticated(false);
-			router.push('/login');
+			router.push('/auth/login');
 		}
 	};
 
-	// const {
-	// 	data: dataProfile,
-	// 	isLoading,
-	// 	error,
-	// } = useQuery({
-	// 	queryKey: ['dataProfile'],
-	// 	queryFn: getAccount,
-	// });
+	const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+	let userId = null;
+	if (accessToken) {
+		try {
+			const decoded = jwtDecode(accessToken);
+			userId = decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+		} catch (error) {
+			console.error('Error decoding token:', error);
+		}
+	}
 
-	// useEffect(() => {
-	// 	if (isAuthenticated && !isLoading && dataProfile) {
-	// 		if (dataProfile.role === 'ROLE_ADMIN' || dataProfile.role === 'ROLE_STAFF') {
-	// 			return;
-	// 		}
-	// 		toastr.error('Bạn không có quyền truy cập vào trang này!');
-	// 		router.push('/');
-	// 	}
-	// }, [isAuthenticated, dataProfile, isLoading, router]);
+	const {
+		data: dataProfile,
+		isLoading,
+		error,
+	} = useQuery({
+		queryKey: ['dataProfile'],
+		queryFn: () => getUserInfo(userId),
+		enabled: !!userId,
+	});
+
+	useEffect(() => {
+		if (isAuthenticated && !isLoading && dataProfile) {
+			if (dataProfile.role === 'Admin' || dataProfile.role === 'Manager') {
+				return;
+			}
+			toastr.error('Bạn không có quyền truy cập vào trang này!');
+			router.push('/');
+		}
+	}, [isAuthenticated, dataProfile, isLoading, router]);
 
 	return (
 		<Provider>
-			<AuthContext.Provider value={{ isAuthenticated, login, logout }}>{children}</AuthContext.Provider>
+			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile }}>
+				{children}
+			</AuthContext.Provider>
 		</Provider>
 	);
 };

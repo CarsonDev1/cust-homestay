@@ -2,19 +2,19 @@ import Head from 'next/head';
 import NProgress from 'nprogress';
 import Router from 'next/router';
 import 'nprogress/nprogress.css';
-import '../styles/globals.css';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from 'context/AuthProvider';
 import Provider from 'utils/Provider';
 import { SessionProvider } from 'next-auth/react';
+import '../styles/globals.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 NProgress.configure({ showSpinner: false });
 Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeError', () => NProgress.done());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 
-const App = ({ Component, pageProps, session }) => {
+export default function MyApp({ Component, pageProps, session }) {
 	return (
 		<div className='h-full'>
 			<Head>
@@ -29,12 +29,10 @@ const App = ({ Component, pageProps, session }) => {
 				<AuthProvider dynamic>
 					<SessionProvider session={session}>
 						<Component {...pageProps} />
+						<ToastContainer />
 					</SessionProvider>
 				</AuthProvider>
 			</Provider>
-			<ToastContainer />
 		</div>
 	);
-};
-
-export default App;
+}
