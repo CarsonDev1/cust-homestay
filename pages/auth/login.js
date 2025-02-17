@@ -137,7 +137,7 @@ export default function LoginForm() {
 						<div className='mt-4 text-center'>
 							<Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
 								<DialogTrigger asChild>
-									<button className='text-blue-500 hover:underline text-sm'>Forgot Password?</button>
+									<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
 								</DialogTrigger>
 								<DialogContent>
 									<DialogHeader>

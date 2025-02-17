@@ -12,6 +12,8 @@ import { Textarea } from '@/components/components/ui/textarea';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
 import { updateProfile } from 'api/auth/updateProfile';
+import { Eye, EyeOff } from 'lucide-react';
+import { changePassword } from 'api/auth/changePassword';
 
 export default function ProfilePage() {
 	const { dataProfile } = useAuth();
@@ -37,10 +39,14 @@ export default function ProfilePage() {
 		}
 	}, [dataProfile]);
 
-	const [passwords, setPasswords] = useState({
-		currentPassword: '',
+	const [passwordData, setPasswordData] = useState({
+		oldPassword: '',
 		newPassword: '',
-		confirmPassword: '',
+	});
+
+	const [showPassword, setShowPassword] = useState({
+		oldPassword: false,
+		newPassword: false,
 	});
 
 	const [isEditing, setIsEditing] = useState(false);
@@ -80,8 +86,12 @@ export default function ProfilePage() {
 		setProfile({ ...profile, [e.target.name]: e.target.value });
 	};
 
+	const toggleShowPassword = (field) => {
+		setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
+	};
+
 	const handlePasswordChange = (e) => {
-		setPasswords({ ...passwords, [e.target.name]: e.target.value });
+		setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
 	};
 
 	const handleProfileSubmit = (e) => {
@@ -92,134 +102,156 @@ export default function ProfilePage() {
 			return;
 		}
 
-		// Call the mutate function from useMutation
 		mutateUpdateProfile(profile);
 	};
 
+	const { mutate: mutateChangePassword, isLoading: changePassLoading } = useMutation({
+		mutationFn: async ({ email, oldPassword, newPassword }) => {
+			return await changePassword(email, oldPassword, newPassword);
+		},
+		onSuccess: () => {
+			toast.success('Your password has been successfully updated.');
+			setPasswordData({ oldPassword: '', newPassword: '' });
+		},
+		onError: (error) => {
+			const errorMessage = error.response?.data?.message || 'Failed to change password.';
+			toast.error(errorMessage);
+		},
+	});
+
 	const handlePasswordSubmit = (e) => {
 		e.preventDefault();
-		if (passwords.newPassword !== passwords.confirmPassword) {
-			toast({
-				title: 'Error',
-				description: 'New passwords do not match.',
-				variant: 'destructive',
-			});
+		if (!passwordData.oldPassword || !passwordData.newPassword) {
+			toast.warning('Please fill in all fields.');
 			return;
 		}
-		console.log('Password changed');
-		toast({
-			title: 'Password Changed',
-			description: 'Your password has been successfully updated.',
+		mutateChangePassword({
+			email: dataProfile.email,
+			oldPassword: passwordData.oldPassword,
+			newPassword: passwordData.newPassword,
 		});
 	};
 
 	return (
 		<ManagerLayout>
-			<h1 className='text-2xl font-bold mb-4'>Profile</h1>
-			<div className='grid gap-8 md:grid-cols-2'>
-				<Card>
-					<CardHeader>
-						<CardTitle>Profile Information</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<form onSubmit={handleProfileSubmit} className='space-y-4'>
-							<div className='space-y-2'>
-								<Label htmlFor='fullName'>Full Name</Label>
-								<Input
-									id='fullName'
-									name='fullName'
-									value={profile.fullName}
-									onChange={handleProfileChange}
-									disabled={!isEditing}
-									required
-								/>
-							</div>
-							<div className='space-y-2'>
-								<Label htmlFor='email'>Email</Label>
-								<Input
-									id='email'
-									name='email'
-									type='email'
-									value={profile.email}
-									onChange={handleProfileChange}
-									disabled={!isEditing}
-									required
-								/>
-							</div>
-							<div className='space-y-2'>
-								<Label htmlFor='phone'>Phone</Label>
-								<Input
-									id='phone'
-									name='phone'
-									type='tel'
-									value={profile.phone}
-									onChange={handleProfileChange}
-									disabled={!isEditing}
-								/>
-							</div>
-							<div className='space-y-2'>
-								<Label htmlFor='address'>Address</Label>
-								<Textarea
-									id='address'
-									name='address'
-									value={profile.address}
-									onChange={handleProfileChange}
-									disabled={!isEditing}
-								/>
-							</div>
-							<Button type='submit' disabled={isLoading}>
-								{isEditing ? 'Save Changes' : 'Update Profile'}
-							</Button>
-							{isError && (
-								<p className='text-red-500 text-sm'>Error: {error?.message || 'Unknown error'}</p>
-							)}
-						</form>
-					</CardContent>
-				</Card>
+			<div className='flex flex-col gap-2'>
+				<h1 className='text-2xl font-bold'>Profile</h1>
+				<div className='grid gap-4 md:grid-cols-2'>
+					<Card>
+						<CardHeader>
+							<CardTitle>Profile Information</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<form onSubmit={handleProfileSubmit} className='space-y-4'>
+								<div className='space-y-2'>
+									<Label htmlFor='fullName'>Full Name</Label>
+									<Input
+										id='fullName'
+										name='fullName'
+										value={profile.fullName}
+										onChange={handleProfileChange}
+										disabled={!isEditing}
+										required
+									/>
+								</div>
+								<div className='space-y-2'>
+									<Label htmlFor='email'>Email</Label>
+									<Input
+										id='email'
+										name='email'
+										type='email'
+										value={profile.email}
+										onChange={handleProfileChange}
+										disabled={!isEditing}
+										required
+									/>
+								</div>
+								<div className='space-y-2'>
+									<Label htmlFor='phone'>Phone</Label>
+									<Input
+										id='phone'
+										name='phone'
+										type='tel'
+										value={profile.phone}
+										onChange={handleProfileChange}
+										disabled={!isEditing}
+									/>
+								</div>
+								<div className='space-y-2'>
+									<Label htmlFor='address'>Address</Label>
+									<Textarea
+										id='address'
+										name='address'
+										value={profile.address}
+										onChange={handleProfileChange}
+										disabled={!isEditing}
+									/>
+								</div>
+								<Button type='submit' disabled={isLoading}>
+									{isEditing ? 'Save Changes' : 'Update Profile'}
+								</Button>
+								{isError && (
+									<p className='text-sm text-red-500'>Error: {error?.message || 'Unknown error'}</p>
+								)}
+							</form>
+						</CardContent>
+					</Card>
 
-				<Card>
-					<CardHeader>
-						<CardTitle>Change Password</CardTitle>
-					</CardHeader>
-					<CardContent>
-						<form onSubmit={handlePasswordSubmit} className='space-y-4'>
-							<div className='space-y-2'>
-								<Label htmlFor='currentPassword'>Current Password</Label>
-								<Input
-									id='currentPassword'
-									name='currentPassword'
-									type='password'
-									value={passwords.currentPassword}
-									onChange={handlePasswordChange}
-									required
-								/>
-							</div>
-							<div className='space-y-2'>
-								<Label htmlFor='newPassword'>New Password</Label>
-								<Input
-									id='newPassword'
-									name='newPassword'
-									type='password'
-									value={passwords.newPassword}
-									onChange={handlePasswordChange}
-									required
-								/>
-							</div>
-							<div className='space-y-2'>
-								<Label htmlFor='confirmPassword'>Confirm New Password</Label>
-								<Input
-									id='confirmPassword'
-									name='confirmPassword'
-									type='password'
-									value={passwords.confirmPassword}
-									onChange={handlePasswordChange}
-									required
-								/>
-							</div>
-							<Button type='submit'>Change Password</Button>
-						</form>
-					</CardContent>
-				</Card>
+					<Card className='h-fit'>
+						<CardHeader>
+							<CardTitle>Change Password</CardTitle>
+						</CardHeader>
+						<CardContent>
+							<form onSubmit={handlePasswordSubmit} className='space-y-4'>
+								<div className='space-y-2'>
+									<Label htmlFor='oldPassword'>Old Password</Label>
+									<div className='relative'>
+										<Input
+											id='oldPassword'
+											name='oldPassword'
+											type={showPassword.oldPassword ? 'text' : 'password'}
+											value={passwordData.oldPassword}
+											onChange={handlePasswordChange}
+											required
+											placeholder='*******'
+										/>
+										<button
+											type='button'
+											className='absolute transform -translate-y-1/2 right-2 top-1/2'
+											onClick={() => toggleShowPassword('oldPassword')}
+										>
+											{showPassword.oldPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+										</button>
+									</div>
+								</div>
+								<div className='space-y-2'>
+									<Label htmlFor='newPassword'>New Password</Label>
+									<div className='relative'>
+										<Input
+											id='newPassword'
+											name='newPassword'
+											type={showPassword.newPassword ? 'text' : 'password'}
+											value={passwordData.newPassword}
+											onChange={handlePasswordChange}
+											required
+											placeholder='*******'
+										/>
+										<button
+											type='button'
+											className='absolute transform -translate-y-1/2 right-2 top-1/2'
+											onClick={() => toggleShowPassword('newPassword')}
+										>
+											{showPassword.newPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+										</button>
+									</div>
+								</div>
+								<Button type='submit' disabled={changePassLoading}>
+									{changePassLoading ? 'Changing...' : 'Change Password'}
+								</Button>
+							</form>
+						</CardContent>
+					</Card>
+				</div>
 			</div>
 		</ManagerLayout>
 	);

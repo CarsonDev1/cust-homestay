@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation';
-import { Calendar, ChevronUp, Home, Inbox, Search, Settings, User, User2 } from 'lucide-react';
+import { Calendar, ChevronUp, Home, Hotel, Search, Settings, User, User2 } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -16,7 +16,7 @@ import { useAuth } from 'context/AuthProvider';
 
 const items = [
 	{ title: 'Home', url: '/manager', icon: Home },
-	{ title: 'Inbox', url: '/inbox', icon: Inbox },
+	{ title: 'Homestay', url: '/manager/homestay', icon: Hotel },
 	{ title: 'Calendar', url: '/calendar', icon: Calendar },
 	{ title: 'Search', url: '/search', icon: Search },
 	{ title: 'Settings', url: '/settings', icon: Settings },
@@ -31,7 +31,7 @@ export function AppSidebar() {
 		<Sidebar>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>Manager</SidebarGroupLabel>
+					<SidebarGroupLabel className='text-base'>Manager Homestay</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{items.map((item) => {
