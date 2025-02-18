@@ -28,7 +28,7 @@ export function AppSidebar() {
 	const pathname = usePathname();
 
 	return (
-		<Sidebar>
+		<Sidebar className='z-0'>
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarGroupLabel className='text-base'>Manager Homestay</SidebarGroupLabel>
