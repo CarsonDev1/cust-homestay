@@ -20,6 +20,9 @@ import { Input } from '@/components/components/ui/input';
 import { Pencil, Trash2 } from 'lucide-react';
 import { createFacility } from 'api/facility/createFacility';
 import Swal from 'sweetalert2';
+import { updateFacility } from 'api/facility/updateFacility';
+import { Textarea } from '@/components/components/ui/textarea';
+import { deleteFacility } from 'api/facility/deleteFacility';
 
 const Facility = () => {
 	const queryClient = useQueryClient();
@@ -58,6 +61,51 @@ const Facility = () => {
 		},
 	});
 
+	const updateFacilityMutation = useMutation({
+		mutationFn: updateFacility,
+		onSuccess: () => {
+			queryClient.invalidateQueries(['facilities']);
+			setDialogOpen(false);
+			setFormData({ facilityID: '', name: '', description: '' });
+			Swal.fire({
+				icon: 'success',
+				title: 'Facility Updated',
+				text: 'The facility has been updated successfully.',
+				timer: 2000,
+				showConfirmButton: false,
+			});
+		},
+		onError: (error) => {
+			console.error('Failed to update facility:', error);
+			Swal.fire({
+				icon: 'error',
+				title: 'Update Failed',
+				text: 'There was an error updating the facility.',
+			});
+		},
+	});
+
+	const deleteFacilityMutation = useMutation({
+		mutationFn: (id) => deleteFacility(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries(['facilities']);
+			Swal.fire({
+				icon: 'success',
+				title: 'Facility Deleted',
+				text: 'The facility has been deleted successfully.',
+				timer: 2000,
+				showConfirmButton: false,
+			});
+		},
+		onError: () => {
+			Swal.fire({
+				icon: 'error',
+				title: 'Deletion Failed',
+				text: 'There was an error deleting the facility.',
+			});
+		},
+	});
+
 	const handleFormChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
@@ -66,7 +114,25 @@ const Facility = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (!formData.name || !formData.description) return;
-		createFacilityMutation.mutate(formData);
+		isEditMode
+			? updateFacilityMutation.mutate(formData)
+			: createFacilityMutation.mutate({ name: formData.name, description: formData.description });
+	};
+
+	const handleDelete = (facilityId) => {
+		Swal.fire({
+			title: 'Are you sure?',
+			text: "You won't be able to revert this!",
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, delete it!',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				deleteFacilityMutation.mutate(facilityId);
+			}
+		});
 	};
 
 	const dataFacility = data?.Data || [];
@@ -87,6 +153,11 @@ const Facility = () => {
 
 	const openEditDialog = (facility) => {
 		setIsEditMode(true);
+		setFormData({
+			facilityID: facility.id,
+			name: facility.name,
+			description: facility.description,
+		});
 		setDialogOpen(true);
 	};
 
@@ -126,7 +197,7 @@ const Facility = () => {
 										<Label htmlFor='description' className='text-right'>
 											Description
 										</Label>
-										<Input
+										<Textarea
 											id='description'
 											name='description'
 											value={formData.description}
