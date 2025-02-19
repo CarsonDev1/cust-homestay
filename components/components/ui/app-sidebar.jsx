@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation';
-import { Calendar, ChevronUp, Home, Hotel, Search, Settings, User, User2 } from 'lucide-react';
+import { Boxes, ChevronUp, Home, Hotel, Search, Settings, User, User2 } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -17,7 +17,7 @@ import { useAuth } from 'context/AuthProvider';
 const items = [
 	{ title: 'Home', url: '/manager', icon: Home },
 	{ title: 'Homestay', url: '/manager/homestay', icon: Hotel },
-	{ title: 'Calendar', url: '/calendar', icon: Calendar },
+	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
 	{ title: 'Search', url: '/search', icon: Search },
 	{ title: 'Settings', url: '/settings', icon: Settings },
 	{ title: 'Account', url: '/manager/profile', icon: User },
