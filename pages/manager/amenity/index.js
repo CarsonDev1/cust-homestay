@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ManagerLayout from '../layout';
-import { getAllAmenity } from 'api/amenity/getAmenity';
+import { getAllAmenity } from 'pages/api/amenity/getAmenity';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/components/ui/button';
 import {

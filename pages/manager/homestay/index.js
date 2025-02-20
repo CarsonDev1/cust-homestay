@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import ManagerLayout from '../layout';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getAllHomeStay } from 'api/homestay/getAllHomeStay';
+import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import { Button } from '@/components/components/ui/button';
-import { getHomeStayDetail } from 'api/homestay/getHomeStayDetail';
+import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import { Checkbox } from '@/components/components/ui/checkbox';
 import { Slider } from '@/components/components/ui/slider';
 import { Car, Star, Wifi, PocketIcon as Pool } from 'lucide-react';

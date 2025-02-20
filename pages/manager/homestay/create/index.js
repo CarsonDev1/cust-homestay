@@ -11,9 +11,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth } from 'context/AuthProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createHomeStay } from 'api/homestay/createHomeStay';
-import { uploadImage } from 'api/image/uploadImage';
-import { uploadImages } from 'api/homestay/uploadImageHomeStay';
+import { createHomeStay } from 'pages/api/homestay/createHomeStay';
+import { uploadImage } from 'pages/api/image/uploadImage';
+import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 
 const MAX_IMAGES = 8;
 

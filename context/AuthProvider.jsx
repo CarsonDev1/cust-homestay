@@ -1,6 +1,6 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { getUserInfo } from 'api/auth/getMe';
+import { getUserInfo } from 'pages/api/auth/getMe';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect } from 'react';
