@@ -10,6 +10,7 @@ import { Car, Star, Wifi, PocketIcon as Pool } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Modal from 'react-modal';
 import Link from 'next/link';
+import NoImage from '../../../public/images/no-image.jpeg';
 
 Modal.setAppElement('#__next');
 
@@ -59,8 +60,8 @@ const Homestay = () => {
 		setIsModalOpen(true);
 	};
 
-	const homestay = data?.Data;
-	const homestayDetail = homeStayDetail?.Data;
+	const homestay = data;
+	const homestayDetail = homeStayDetail;
 
 	const currentDate = new Date().toISOString().slice(0, 10);
 

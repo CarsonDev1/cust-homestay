@@ -97,7 +97,7 @@ export default function ProfilePage() {
 
 		try {
 			const imageUrl = await uploadImage(file);
-			const avatar = imageUrl.Data.url;
+			const avatar = imageUrl?.url;
 			setProfile((prev) => ({ ...prev, avatar: avatar }));
 			toast.success('Image uploaded successfully!');
 		} catch {
