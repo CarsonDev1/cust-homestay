@@ -61,7 +61,7 @@ const CreateHomeStay = () => {
 			});
 		},
 		onError: () => {
-			toast.error('Failed to create homestay. Please try again.');
+			toast.error('Failed to create homestay. Please try agains.');
 		},
 	});
 
