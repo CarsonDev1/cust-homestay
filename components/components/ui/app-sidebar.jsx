@@ -39,7 +39,8 @@ export function AppSidebar() {
 						<SidebarMenu>
 							{items.map((item) => {
 								const isActive =
-									pathname === item.url || (item.url !== '/manager' && pathname.startsWith(item.url));
+									pathname === item.url ||
+									(item.url !== '/manager' && pathname?.startsWith(item.url));
 
 								return (
 									<SidebarMenuItem key={item.title}>

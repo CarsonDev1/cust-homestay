@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import ManagerLayout from '../layout';
 import { useAuth } from 'context/AuthProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createPost } from 'pages/api/posts/createPost';
@@ -9,10 +8,12 @@ import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 import { Label } from '@/components/components/ui/label';
 import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
+import ManagerLayout from 'pages/manager/layout';
+import { Textarea } from '@/components/components/ui/textarea';
 
-const MAX_IMAGES = 5;
+const MAX_IMAGES = 8;
 
-const createPost = () => {
+const createPostPage = () => {
 	const { dataProfile } = useAuth();
 	const queryClient = useQueryClient();
 
@@ -90,22 +91,6 @@ const createPost = () => {
 			<div className=''>
 				<h2 className='mb-4 text-2xl font-bold'>Create a New Post</h2>
 				<form onSubmit={handleSubmit} className='space-y-4'>
-					<Input name='title' placeholder='Title' value={formData.title} onChange={handleChange} required />
-					<Input
-						name='description'
-						placeholder='Description'
-						value={formData.description}
-						onChange={handleChange}
-						required
-					/>
-					<Input
-						name='location'
-						placeholder='Location'
-						value={formData.location}
-						onChange={handleChange}
-						required
-					/>
-
 					<div>
 						<Label className='block mb-2 font-medium'>Images</Label>
 						<Input
@@ -116,13 +101,13 @@ const createPost = () => {
 							className='hidden'
 							id='imagesInput'
 						/>
-						<div className='grid grid-cols-4 gap-4'>
+						<div className='grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4'>
 							{formData.images.map((url, index) => (
 								<div key={index} className='relative group'>
 									<img
 										src={url}
 										alt={`Preview ${index}`}
-										className='object-cover w-full rounded-lg aspect-square'
+										className='object-contain w-full rounded-lg aspect-square'
 									/>
 									<button
 										onClick={() => handleDeleteImage(index)}
@@ -142,6 +127,34 @@ const createPost = () => {
 							)}
 						</div>
 					</div>
+					<div>
+						<Label className='block mb-2 font-medium'>Title</Label>
+						<Input
+							name='title'
+							placeholder='Title'
+							value={formData.title}
+							onChange={handleChange}
+							required
+						/>
+					</div>
+					<div>
+						<Label className='block mb-2 font-medium'>Description</Label>
+						<Textarea
+							name='description'
+							placeholder='Description'
+							value={formData.description}
+							onChange={handleChange}
+							required
+							className='h-40'
+						/>
+					</div>
+					<Input
+						name='location'
+						placeholder='Location'
+						value={formData.location}
+						onChange={handleChange}
+						required
+					/>
 
 					<Button type='submit' className='w-full' disabled={mutation.isLoading}>
 						{mutation.isLoading ? 'Posting...' : 'Create Post'}
@@ -152,4 +165,4 @@ const createPost = () => {
 	);
 };
 
-export default createPost;
+export default createPostPage;

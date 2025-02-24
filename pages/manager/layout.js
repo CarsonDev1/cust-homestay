@@ -5,6 +5,7 @@ import { SidebarProvider, SidebarTrigger } from '@/components/components/ui/side
 import { AppSidebar } from '@/components/components/ui/app-sidebar';
 import 'react-toastify/dist/ReactToastify.css';
 import { Toaster } from '@/components/components/ui/sonner';
+import ManagerBreadcrumb from '@/components/ManagerBreadcrumb';
 
 const ManagerLayout = ({ children }) => {
 	return (
@@ -20,8 +21,11 @@ const ManagerLayout = ({ children }) => {
 			<SidebarProvider>
 				<AppSidebar />
 				<main className='w-full p-3 overflow-x-hidden'>
-					<SidebarTrigger className='justify-start w-full' />
-					{children}
+					<div className='flex items-center gap-2'>
+						<SidebarTrigger />
+						<ManagerBreadcrumb />
+					</div>
+					<div className='px-0 py-4'>{children}</div>
 					<ToastContainer />
 					<Toaster position='top-right' richColors />
 				</main>
