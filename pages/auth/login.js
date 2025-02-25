@@ -46,9 +46,11 @@ export default function LoginForm() {
 			const responseData = await response.json();
 			if (response.ok) {
 				const accessToken = responseData.accessToken;
+				const refreshToken = responseData.refreshToken;
 				const role = responseData.role;
 				localStorage.setItem('accessToken', accessToken);
-				login({ accessToken });
+				localStorage.setItem('refreshToken', refreshToken);
+				login({ accessToken, refreshToken });
 
 				toast.success('Login successful! Redirecting...');
 				reset();

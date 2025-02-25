@@ -23,7 +23,7 @@ api.interceptors.response.use(
 		console.log('Error in interceptor:', error.response?.status); // Debugging line
 		const originalRequest = error.config;
 
-		if (error.response?.status === 401 && !originalRequest._retry) {
+		if (error.response?.status === 500 && !originalRequest._retry) {
 			originalRequest._retry = true;
 			const refreshToken = localStorage.getItem('refreshToken');
 
