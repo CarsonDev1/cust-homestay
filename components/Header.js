@@ -19,13 +19,6 @@ const Header = ({ placeholder }) => {
 	const router = useRouter();
 	const { dataProfile, logout } = useAuth();
 	const [location, setLocation] = useState('');
-	const [scrolled, setScrolled] = useState(false);
-
-	useEffect(() => {
-		const handleScroll = () => setScrolled(window.scrollY > 20);
-		window.addEventListener('scroll', handleScroll);
-		return () => window.removeEventListener('scroll', handleScroll);
-	}, []);
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
@@ -35,32 +28,24 @@ const Header = ({ placeholder }) => {
 	};
 
 	return (
-		<header
-			className={`fixed top-0 w-full z-50 transition-all duration-300 py-4 ${
-				scrolled ? 'bg-white shadow-lg' : 'bg-transparent'
-			}`}
-		>
-			<div className='container-lg flex justify-between items-center'>
+		<header className='sticky top-0 z-50 w-full bg-white shadow-lg'>
+			<div className='container-lg flex justify-between items-center py-2 md:py-4 relative'>
 				<div className='flex items-center cursor-pointer gap-2' onClick={() => router.push('/')}>
 					<Image
 						src='/images/logo.jpg'
 						alt='logo'
 						width={40}
 						height={40}
-						className='rounded-full shadow-md'
+						className='rounded-full shadow-xl border border-slate-500'
 					/>
 				</div>
 
-				<nav
-					className={`hidden md:flex space-x-8 text-sm font-medium ${
-						scrolled ? 'text-gray-600' : 'text-white'
-					}`}
-				>
-					<Link href='#' className='hover:text-pink-500 transition-colors'>
-						Places to stay
-					</Link>
+				<nav className={`hidden md:flex space-x-8 text-sm font-medium text-gray-600`}>
 					<Link href='/home-stay' className='hover:text-pink-500 transition-colors'>
-						Experiences
+						Homestay
+					</Link>
+					<Link href='#' className='hover:text-pink-500 transition-colors'>
+						Posts
 					</Link>
 					<Link href='#' className='hover:text-pink-500 transition-colors'>
 						Online Experiences
@@ -73,18 +58,18 @@ const Header = ({ placeholder }) => {
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<div
-									className={`flex items-center gap-2 px-3 py-2 rounded-full border cursor-pointer hover:bg-gray-100 ${
-										scrolled ? 'text-slate-600' : 'text-white hover:text-slate-600'
-									}`}
+									className={`flex items-center gap-2 px-3 py-1 rounded-full border cursor-pointer hover:bg-gray-100
+									text-slate-600 hover:text-slate-600
+									`}
 								>
 									<Menu className='w-4 h-4' />
 									{dataProfile.avatar ? (
 										<Image
 											src={dataProfile.avatar}
 											alt='avatar'
-											width={32}
-											height={32}
-											className='rounded-full'
+											width={40}
+											height={40}
+											className='rounded-full object-cover'
 										/>
 									) : (
 										<User className='w-5 h-5' />
@@ -116,22 +101,6 @@ const Header = ({ placeholder }) => {
 					</Sheet>
 				</div>
 			</div>
-
-			<form
-				onSubmit={handleSubmit}
-				className='max-w-lg mx-auto mt-4 flex items-center gap-2 rounded-full border shadow-md px-4 py-2 bg-white md:hidden'
-			>
-				<input
-					type='text'
-					value={location}
-					onChange={(e) => setLocation(e.target.value)}
-					placeholder={placeholder || 'Where are you going?'}
-					className='flex-1 text-sm outline-none placeholder-gray-400'
-				/>
-				<Button type='submit' size='icon' variant='ghost' disabled={!location.trim()}>
-					<Search className='w-5 h-5 text-pink-500' />
-				</Button>
-			</form>
 		</header>
 	);
 };

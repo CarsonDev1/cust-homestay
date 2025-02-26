@@ -1,118 +1,76 @@
-import styled from "styled-components";
-import Image from "next/image";
+import { useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
+import Link from 'next/link';
+import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
+import React, { useState } from 'react';
 
-const MediumCards = ({ title, items, urlPrefix }) => {
-  return (
-    <CardsSection length={items.length}>
-      <h2>{title}</h2>
+const MediumCards = () => {
+	const [filters, setFilters] = useState({
+		amenityNames: [],
+		priceRange: [0, 1000],
+		standard: [],
+	});
 
-      <div className="cards">
-        {items.map((item, index) => (
-          <div key={index} className="card">
-            <div className="img">
-              <Image
-                width={300}
-                height={300}
-                alt={item.title}
-                src={urlPrefix + item.img}
-              />
-            </div>
-            <span>
-              <h3>{item.title}</h3>
-              {item.p && <p>{item.p}</p>}
-            </span>
-          </div>
-        ))}
-      </div>
-    </CardsSection>
-  );
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['homeStays', filters],
+		queryFn: () => getAllHomeStay(filters),
+	});
+
+	const dataHot = data?.filter((item) => item.standar === 5).slice(0, 4);
+
+	return (
+		<div className='sec-com'>
+			<div className='container-lg'>
+				<div className='grid grid-cols-4 gap-2'>
+					{dataHot?.map((item) => (
+						<div key={item.id}>
+							<div className='w-full h-full relative overflow-hidden group cursor-pointer rounded-md'>
+								<Image
+									src={item?.mainImage}
+									alt='main-img'
+									width={500}
+									height={500}
+									className='w-full h-full object-cover group-hover:scale-[1.1] transition-all duration-700'
+								/>
+								<div className='absolute inset-0 bg-black/20'></div>
+
+								<div className='absolute top-[50%] transform group-hover:translate-y-[-50%] transition-all duration-500 w-full h-full left-0 flex items-center justify-center flex-col z-30 gap-2'>
+									<h1 className='text-[1.5rem] font-bold text-white text-center capitalize'>
+										{item?.name || 'HomeStay Name'}
+									</h1>
+									<p className='flex items-center'>
+										{[...Array(5)].map((_, index) => (
+											<svg
+												key={index}
+												className={`w-5 h-5 ${
+													item.standar > index ? 'text-yellow-500' : 'text-gray-300'
+												}`}
+												fill='currentColor'
+												xmlns='http://www.w3.org/2000/svg'
+												viewBox='0 0 20 20'
+											>
+												<path d='M10 15l-5.09 3.09 1.64-6.88L0 6.91l6.91-.59L10 0l2.09 6.32 6.91.59-4.55 4.3 1.64 6.88L10 15z' />
+											</svg>
+										))}
+									</p>
+									<p className='text-center opacity-0 group-hover:opacity-100 transition-all duration-700 text-white text-[0.9rem]'>
+										{item?.description?.slice(0, 80) || 'No description available.'}
+									</p>
+									<Link href={`/home-stay/${item.id}`}>
+										<button className='bg-blue-400 opacity-0 group-hover:opacity-100 px-3 py-2 mt-3 hover:bg-blue-500 transition-all duration-1000 text-white rounded-md text-[0.9rem]'>
+											Booking now
+										</button>
+									</Link>
+								</div>
+
+								<div className='w-full opacity-0 group-hover:opacity-100 transition-all duration-500 bg-gradient-to-b from-[rgba(0,0,0,0.001)] to-[rgba(0,0,0,0.5)] h-full absolute bottom-0 left-0 right-0'></div>
+							</div>
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default MediumCards;
-
-const CardsSection = styled.section`
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(${(props) => props.length}, 1fr);
-    gap: 1.5rem;
-    margin-bottom: -1.5rem;
-    padding: 1.5rem 0;
-
-    &::-webkit-scrollbar {
-      -webkit-appearance: none;
-      display: none;
-    }
-  }
-
-  .card {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
-
-    span {
-      margin-top: 0.75rem;
-
-      h3 {
-        font-size: 1.25rem;
-      }
-    }
-
-    img {
-      border-radius: 1rem;
-      width: 100%;
-      transition: all 0.2s;
-    }
-
-    &:hover img {
-      transform: scale(0.95);
-    }
-
-    .img {
-      position: relative;
-      & > div:first-child {
-        position: absolute !important;
-        overflow: visible !important;
-        width: 100%;
-      }
-
-      & > div {
-        width: 100%;
-      }
-    }
-  }
-
-  @media (max-width: 576px) {
-    .cards {
-      grid-template-columns: repeat(${(props) => props.length}, 80%);
-      grid-template-rows: 1fr;
-      overflow: scroll;
-      margin: 0 -1.5rem -1.5rem -1.5rem;
-      padding: 1.5rem;
-      scroll-snap-type: x mandatory;
-      scroll-padding-left: 1.5rem;
-    }
-
-    .card {
-      scroll-snap-align: start;
-
-      span {
-        margin-top: 0.5rem;
-        h3 {
-          line-height: 1.3;
-        }
-        p {
-          margin-top: 0.25rem;
-        }
-      }
-    }
-
-    .card:last-of-type {
-      margin-right: 10rem;
-    }
-
-    .card:last-of-type {
-      border-right: 1.5rem solid transparent;
-      width: calc(100% + 1.5rem);
-    }
-  }
-`;

@@ -14,9 +14,9 @@ export default function Home() {
 		<MainLayout>
 			<main>
 				<Hero />
+				<MediumCards />
 				<Explore />
 				<Banner />
-				<MediumCards {...live} />
 				<LargeCards {...discover} />
 				<Hosting />
 			</main>
