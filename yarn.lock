@@ -2799,6 +2799,11 @@ react-list@^0.8.13:
   dependencies:
     prop-types "15"
 
+react-loading-skeleton@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.yarnpkg.com/react-loading-skeleton/-/react-loading-skeleton-3.5.0.tgz#da2090355b4dedcad5c53cb3f0ed364e3a76d6ca"
+  integrity sha512-gxxSyLbrEAdXTKgfbpBEFZCO/P153DnqSCQau2+o6lNy1jgMRr2MmRmOzMmyrwSaSYLRB8g7b0waYPmUjz7IhQ==
+
 react-map-gl@6.1.19:
   version "6.1.19"
   resolved "https://registry.yarnpkg.com/react-map-gl/-/react-map-gl-6.1.19.tgz#7c5e2d6c0ba582376157af942fa004fe6f3c28b8"
@@ -3172,6 +3177,11 @@ sweetalert2@^11.17.2:
   version "11.17.2"
   resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-11.17.2.tgz#a11852713c8eea274d9e1d233522322cc63cf5be"
   integrity sha512-HKxDr1IyV3Lxr3W6sb61qm/p2epFIEdr5EKwteRFHnIg6f8nHFl2kX++DBVz16Mac+fFiU3hMpjq1L6yE2Ge5w==
+
+swiper@^11.2.4:
+  version "11.2.4"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-11.2.4.tgz#4d1b55e07f909957e0406bdbff81b850b9dc8aeb"
+  integrity sha512-DTtglrsFfMYytid+oNy4QI3t2N2+XhhwSYbnyOhlwBmvY8Bkoj3ombK1/b80w8vDpQ+Lqlnbm+0737+i32MrcA==
 
 swr@^2.2.0:
   version "2.3.2"

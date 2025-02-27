@@ -1,11 +1,11 @@
 import api from 'utils/api';
 
-export const editHomeStayInformation = async (homeStayData) => {
+export const createFacility = async (facilityData) => {
 	try {
-		const response = await api.put('/HomeStay/edit-home-stay-information', homeStayData);
+		const response = await api.post('/Facility/add-facility', [facilityData]);
 		return response.data;
 	} catch (error) {
-		console.error('Error editing home stay information:', error);
+		console.error('Error adding facility:', error);
 		throw error;
 	}
 };

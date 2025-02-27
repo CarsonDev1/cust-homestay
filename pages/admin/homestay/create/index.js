@@ -10,10 +10,11 @@ import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth } from 'context/AuthProvider';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createHomeStay } from 'pages/api/homestay/createHomeStay';
 import { uploadImage } from 'pages/api/image/uploadImage';
 import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
+import { getAllFacility } from 'pages/api/facility/getFacility';
 
 const MAX_IMAGES = 8;
 

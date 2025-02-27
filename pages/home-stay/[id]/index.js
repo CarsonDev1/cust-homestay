@@ -1,69 +1,161 @@
 import { Badge } from '@/components/components/ui/badge';
 import { Button } from '@/components/components/ui/button';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Bath, Bed, Car, ChefHat, Cigarette, MapPin, Wifi } from 'lucide-react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation';
+import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import MainLayout from 'pages/layout';
 import React from 'react';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+import 'react-photo-view/dist/react-photo-view.css';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { Navigation } from 'swiper/modules';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const homeStayDetail = () => {
 	const { id } = useParams() ?? {};
+
+	const { data, isLoading, error } = useQuery({
+		queryKey: ['homeStayDetail', id],
+		queryFn: () => getHomeStayDetail(id),
+		enabled: !!id,
+	});
+
+	const homestay = data || [];
+
+	if (isLoading) {
+		return (
+			<MainLayout>
+				<div className='container-lg p-4'>
+					<div className='space-y-4'>
+						<Skeleton height={300} className='rounded-lg' />
+
+						<div className='space-y-2'>
+							<Skeleton width={250} height={30} />
+							<div className='flex items-center'>
+								<MapPin className='w-4 h-4 mr-1 text-gray-400' />
+								<Skeleton width={200} height={20} />
+							</div>
+						</div>
+
+						<div className='flex justify-between'>
+							<Skeleton width={150} height={30} />
+							<Skeleton width={80} height={30} />
+						</div>
+
+						<div className='space-y-2'>
+							<Skeleton width={150} height={25} />
+							<div className='grid grid-cols-4 gap-4'>
+								{Array(4)
+									.fill(null)
+									.map((_, i) => (
+										<Skeleton key={i} height={20} />
+									))}
+							</div>
+						</div>
+
+						<div className='space-y-2'>
+							<Skeleton width={200} height={25} />
+							<Skeleton count={3} />
+						</div>
+
+						<Skeleton height={40} className='rounded-lg' />
+					</div>
+				</div>
+			</MainLayout>
+		);
+	}
+
+	const getPriceForToday = (calendar) => {
+		const todayPrice = calendar?.find((item) => item.date.slice(0, 10) === currentDate);
+		return todayPrice ? todayPrice.price : null;
+	};
+
+	const priceForToday = getPriceForToday(homestay.calendar);
 
 	return (
 		<MainLayout>
 			<div className='sec-com'>
 				<div className='container-lg'>
-					<div className='flex gap-4 relative'>
-						<div className='w-3/4 relative'>
+					<div className='relative'>
+						<div className='relative'>
 							<div className='flex flex-col space-y-4'>
-								<div className='flex h-full'>
-									<div className='relative w-2/3 overflow-hidden rounded-lg'>
-										<Image
-											src='https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-9X7Nw8oikJuzewviUM28Mvx7OF41o7.png'
-											alt='Star Sun Hotel exterior'
-											className='object-cover'
-											width={800}
-											height={300}
-										/>
-									</div>
-									<div className='flex flex-col justify-between w-1/3 gap-3'>
-										<div className='relative rounded-lg h-full'>
-											<Image
-												src='/placeholder.svg?height=200&width=300'
-												alt='Hotel room'
-												width={100}
-												height={100}
-												className='object-cover'
-											/>
+								<PhotoProvider>
+									<div className='flex flex-col h-full gap-2'>
+										<div className='relative overflow-hidden rounded-lg'>
+											<PhotoView src={homestay?.mainImage}>
+												<Image
+													src={homestay.mainImage}
+													alt='Star Sun Hotel exterior'
+													className='object-cover w-full'
+													width={1000}
+													height={800}
+												/>
+											</PhotoView>
 										</div>
-										<div className='relative rounded-lg h-full'>
-											<div className='absolute inset-0 bg-black/60 flex items-center justify-center z-10 rounded-lg'>
-												<span className='text-white text-xl font-semibold'>+10</span>
-											</div>
-											<Image
-												src='/placeholder.svg?height=200&width=300'
-												alt='More hotel images'
-												className='object-cover'
-												width={100}
-												height={100}
-											/>
+
+										<div className='md:hidden'>
+											<Swiper
+												spaceBetween={10}
+												slidesPerView={3}
+												navigation
+												modules={[Navigation]}
+											>
+												{homestay?.homeStayImage?.map((img, index) => (
+													<SwiperSlide key={index}>
+														<PhotoView src={img.image}>
+															<div className='relative rounded-lg flex justify-center h-full border p-3'>
+																<Image
+																	src={img.image}
+																	alt='Hotel room'
+																	width={100}
+																	height={100}
+																	className='object-cover rounded-lg'
+																/>
+															</div>
+														</PhotoView>
+													</SwiperSlide>
+												))}
+											</Swiper>
+										</div>
+
+										<div className='hidden md:grid grid-cols-4 lg:grid-cols-8 justify-items-center'>
+											{homestay?.homeStayImage?.map((img, index) => (
+												<PhotoView key={index} src={img.image}>
+													<div className='relative rounded-lg h-full border p-3'>
+														<Image
+															src={img.image}
+															alt='Hotel room'
+															width={100}
+															height={100}
+															className='object-cover rounded-lg'
+														/>
+													</div>
+												</PhotoView>
+											))}
 										</div>
 									</div>
-								</div>
-								<div className='flex justify-between'>
-									<div>
-										<Badge className='mb-2 bg-blue-100 text-blue-800 hover:bg-blue-100'>
+								</PhotoProvider>
+								<div className='flex justify-between flex-col md:flex-row'>
+									<div className='flex flex-col gap-2'>
+										{/* <Badge className='bg-blue-100 text-blue-800 hover:bg-blue-100 w-fit'>
 											Apartment
-										</Badge>
-										<h1 className='text-2xl font-bold mb-2'>Star Sun Hotel & Apartment</h1>
-										<div className='flex items-center text-gray-500 mb-2'>
+										</Badge> */}
+										<h1 className='text-xl md:text-2xl font-bold'>{homestay.name}</h1>
+										<div className='flex items-center text-gray-500 text-sm md:text-base'>
 											<MapPin className='w-4 h-4 mr-1' />
-											<span>North Carolina, USA</span>
+											<span>
+												{homestay.address}, {homestay.city}
+											</span>
 										</div>
 									</div>
 									<div className='flex flex-col gap-2'>
 										<div className='flex items-center'>
-											{[...Array(5)].map((_, i) => (
+											{[...Array(homestay.standar)].map((_, i) => (
 												<svg
 													key={i}
 													className='w-5 h-5 text-yellow-400'
@@ -74,130 +166,35 @@ const homeStayDetail = () => {
 												</svg>
 											))}
 										</div>
-										<h2 className='text-lg font-semibold'>Price</h2>
+										<h2 className='text-base md:text-lg font-semibold'>Price</h2>
 										<div className='flex items-baseline'>
-											<span className='text-3xl font-bold text-blue-600'>$80</span>
-											<span className='text-gray-600 text-sm ml-2'>For One Day</span>
+											<span className='text-xl md:text-2xl font-bold text-blue-600'>
+												{priceForToday !== null ? (
+													<p className='text-xl text-green-600'>${priceForToday}</p>
+												) : (
+													<p>Decommission</p>
+												)}
+											</span>
 										</div>
 									</div>
 								</div>
 
 								<div className='flex flex-col gap-2'>
-									<h2 className='text-lg font-semibold'>Facility</h2>
-									<div className='grid grid-cols-4 gap-4'>
-										<div className='flex items-center gap-2'>
-											<Bed className='w-5 h-5 text-gray-500' />
-											<span>4 Beds</span>
+									<h2 className='text-base md:text-lg font-semibold'>Facility</h2>
+									{homestay.facility?.length > 0 ? (
+										<div className='grid grid-cols-4 gap-4'>
+											{homestay.facility.map((facility, index) => (
+												<span key={index}>{facility}</span>
+											))}
 										</div>
-										<div className='flex items-center gap-2'>
-											<Bath className='w-5 h-5 text-gray-500' />
-											<span>Baths</span>
-										</div>
-										<div className='flex items-center gap-2'>
-											<svg
-												className='w-5 h-5 text-gray-500'
-												fill='none'
-												viewBox='0 0 24 24'
-												stroke='currentColor'
-											>
-												<path
-													strokeLinecap='round'
-													strokeLinejoin='round'
-													strokeWidth={2}
-													d='M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4'
-												/>
-											</svg>
-											<span>28M Area</span>
-										</div>
-										<div className='flex items-center gap-2'>
-											<Cigarette className='w-5 h-5 text-gray-500' />
-											<span>Smooking Area</span>
-										</div>
-										<div className='flex items-center gap-2'>
-											<ChefHat className='w-5 h-5 text-gray-500' />
-											<span>Kitchen</span>
-										</div>
-										<div className='flex items-center gap-2'>
-											<svg
-												className='w-5 h-5 text-gray-500'
-												fill='none'
-												viewBox='0 0 24 24'
-												stroke='currentColor'
-											>
-												<path
-													strokeLinecap='round'
-													strokeLinejoin='round'
-													strokeWidth={2}
-													d='M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z'
-												/>
-											</svg>
-											<span>Balcony</span>
-										</div>
-										<div className='flex items-center gap-2'>
-											<Wifi className='w-5 h-5 text-gray-500' />
-											<span>Wifi</span>
-										</div>
-										<div className='flex items-center gap-2'>
-											<Car className='w-5 h-5 text-gray-500' />
-											<span>Parking Area</span>
-										</div>
-									</div>
+									) : (
+										<span>No facilities</span>
+									)}
 								</div>
 
 								<div className='flex flex-col gap-2'>
-									<h2 className='text-lg font-semibold'>Description</h2>
-									<p className='text-gray-600 text-sm'>
-										Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem
-										Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-										unknown printer took a galley of type and scrambled it to make a type specimen
-										book. It has survived not only five centuries, but also the leap into electronic
-										typesetting, remaining essentially unchanged.
-									</p>
-								</div>
-							</div>
-						</div>
-
-						<div className='w-1/4 h-fit sticky top-20'>
-							<div className=''>
-								<div className='bg-white rounded-lg shadow flex flex-col items-center p-4'>
-									<div className='flex items-center gap-4 mb-4'>
-										<div className='relative'>
-											<Image
-												src='/placeholder.svg?height=64&width=64'
-												alt='Agent profile'
-												className='rounded-full object-cover'
-												width={64}
-												height={64}
-											/>
-										</div>
-									</div>
-									<div className='text-center'>
-										<h3 className='font-semibold'>Hussain Ahmed</h3>
-										<p className='text-sm text-gray-500'>Agent</p>
-										<p className='text-sm text-gray-500'>
-											<MapPin className='w-4 h-4 inline mr-1' />
-											North Carolina, USA
-										</p>
-										<p className='text-sm text-gray-500'>10 Properties</p>
-									</div>
-									<div className='space-y-2 w-full mt-4'>
-										<Button className='w-full bg-blue-600 text-white hover:bg-blue-700'>
-											Message
-										</Button>
-										<Button className='w-full border-blue-600 text-blue-600 hover:bg-blue-50'>
-											Call
-										</Button>
-									</div>
-								</div>
-
-								<div className='relative'>
-									<Image
-										src='/placeholder.svg?height=300&width=400'
-										alt='Map'
-										width={300}
-										height={300}
-										className='rounded-lg object-cover'
-									/>
+									<h2 className='text-base md:text-lg font-semibold'>Description</h2>
+									<p className='text-gray-600 text-sm md:text-base'>{homestay.description}</p>
 								</div>
 								<Button className='w-full bg-blue-600 hover:bg-blue-700 text-white'>Book Now</Button>
 							</div>

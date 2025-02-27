@@ -15,7 +15,7 @@ import {
 } from './components/ui/dropdown-menu';
 import { Button } from './components/ui/button';
 
-const Header = ({ placeholder }) => {
+const Header = () => {
 	const router = useRouter();
 	const { dataProfile, logout } = useAuth();
 	const [location, setLocation] = useState('');
@@ -28,8 +28,8 @@ const Header = ({ placeholder }) => {
 	};
 
 	return (
-		<header className='sticky top-0 z-50 w-full bg-white shadow-lg'>
-			<div className='container-lg flex justify-between items-center py-2 md:py-4 relative'>
+		<header className='sticky top-0 z-50 w-full bg-white shadow-lg py-2 md:py-4'>
+			<div className='container-lg flex justify-between items-center relative'>
 				<div className='flex items-center cursor-pointer gap-2' onClick={() => router.push('/')}>
 					<Image
 						src='/images/logo.jpg'

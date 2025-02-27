@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import { Button } from './components/ui/button';
 import SearchForm from './SearchForm';
+import { useAuth } from 'context/AuthProvider';
 
 const Hero = () => {
+	const { dataProfile } = useAuth();
 	return (
 		<section
 			className='relative bg-cover bg-center text-light py-20 flex flex-col gap-7'
@@ -19,9 +21,11 @@ const Hero = () => {
 					<p>
 						Get rewarded for your travels - unlock instant savings of 10% or more with a free Runa Homestay
 					</p>
-					<Link href='/auth/register' className='w-fit'>
-						<Button className='w-fit'>Sign in / Register</Button>
-					</Link>
+					{!dataProfile && (
+						<Link href='/auth/register' className='w-fit'>
+							<Button className='w-fit'>Sign in / Register</Button>
+						</Link>
+					)}
 				</div>
 			</div>
 			<div className='container-lg mx-auto'>
