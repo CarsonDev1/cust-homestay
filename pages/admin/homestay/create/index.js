@@ -15,6 +15,7 @@ import { createHomeStay } from 'pages/api/homestay/createHomeStay';
 import { uploadImage } from 'pages/api/image/uploadImage';
 import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 import { getAllFacility } from 'pages/api/facility/getFacility';
+import AdminLayout from 'pages/admin/layout';
 
 const MAX_IMAGES = 8;
 
@@ -154,7 +155,7 @@ const CreateHomeStay = () => {
 	};
 
 	return (
-		<ManagerLayout>
+		<AdminLayout>
 			<div className='p-4 space-y-4'>
 				<h2 className='text-xl font-bold'>Create Homestay</h2>
 				<div className='grid grid-cols-1 gap-4 xl:grid-cols-2'>
@@ -221,7 +222,7 @@ const CreateHomeStay = () => {
 						<Label className='block mb-2 font-medium'>Homestay Name</Label>
 						<Input name='name' placeholder='Homestay Name' value={formData.name} onChange={handleChange} />
 					</div>
-					<div>
+					<div className='flex flex-col gap-1'>
 						<Label className='block mb-2 font-medium'>Year Opened</Label>
 						<DatePicker
 							selected={formData.openIn}
@@ -230,6 +231,7 @@ const CreateHomeStay = () => {
 							dateFormat='yyyy'
 							placeholderText='Select Year'
 							className='w-full px-2 py-1 bg-transparent border rounded'
+							withPortal
 						/>
 					</div>
 					<div>
@@ -314,7 +316,7 @@ const CreateHomeStay = () => {
 					</Button>
 				</div>
 			</div>
-		</ManagerLayout>
+		</AdminLayout>
 	);
 };
 

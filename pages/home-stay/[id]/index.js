@@ -1,12 +1,28 @@
 import { Badge } from '@/components/components/ui/badge';
 import { Button } from '@/components/components/ui/button';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Bath, Bed, Car, ChefHat, Cigarette, MapPin, Wifi } from 'lucide-react';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import {
+	ArrowLeft,
+	Bath,
+	Bed,
+	Car,
+	ChefHat,
+	PocketIcon as Pool,
+	Cigarette,
+	MapPin,
+	Wifi,
+	Tv,
+	Coffee,
+	PocketKnife,
+	Kitchen,
+	Check,
+	Loader2,
+} from 'lucide-react';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import MainLayout from 'pages/layout';
-import React from 'react';
+import React, { useState } from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -15,9 +31,85 @@ import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
+import { createBooking } from 'pages/api/booking/createBooking';
+import { useAuth } from 'context/AuthProvider';
+import { toast } from 'sonner';
 
-const homeStayDetail = () => {
+// Helper function to format dates consistently for comparison
+const formatDateForComparison = (dateInput) => {
+	const date = new Date(dateInput);
+	return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(
+		2,
+		'0'
+	)}`;
+};
+
+// Helper function to get icon for amenities
+const getAmenitiesIcon = (name) => {
+	const lowercaseName = name.toLowerCase();
+	if (lowercaseName.includes('wifi')) return <Wifi className='w-5 h-5' />;
+	if (lowercaseName.includes('tv')) return <Tv className='w-5 h-5' />;
+	if (lowercaseName.includes('parking') || lowercaseName.includes('car')) return <Car className='w-5 h-5' />;
+	if (lowercaseName.includes('kitchen')) return <Kitchen className='w-5 h-5' />;
+	if (lowercaseName.includes('coffee') || lowercaseName.includes('breakfast')) return <Coffee className='w-5 h-5' />;
+	if (lowercaseName.includes('bath')) return <Bath className='w-5 h-5' />;
+	if (lowercaseName.includes('bed')) return <Bed className='w-5 h-5' />;
+	if (lowercaseName.includes('pool')) return <Pool className='w-5 h-5' />;
+	// Default icon for other amenities
+	return <Check className='w-5 h-5' />;
+};
+
+// Helper function to get price for today
+const getPriceForToday = (calendar) => {
+	// If no calendar array or empty, return null (Decommission)
+	if (!calendar || calendar.length === 0) return null;
+
+	const currentDate = formatDateForComparison(new Date());
+
+	// Find today's price entry
+	const todayPrice = calendar?.find((item) => formatDateForComparison(item.date) === currentDate);
+
+	// If there's no calendar entry for today, check if all calendar entries are expired
+	if (!todayPrice) {
+		// Check if all calendar entries are in the past
+		const allExpired = calendar.every((item) => {
+			const entryDate = new Date(item.date);
+			entryDate.setHours(0, 0, 0, 0);
+			const today = new Date();
+			today.setHours(0, 0, 0, 0);
+			return entryDate < today;
+		});
+
+		// If all entries are expired, return null (Decommission)
+		if (allExpired) return null;
+
+		// If there's no entry for today but some future entries exist,
+		// find the next valid entry (first future date)
+		const futureEntries = calendar
+			.filter((item) => {
+				const entryDate = new Date(item.date);
+				entryDate.setHours(0, 0, 0, 0);
+				const today = new Date();
+				today.setHours(0, 0, 0, 0);
+				return entryDate >= today;
+			})
+			.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+		// Return the price of the next valid date or null if none found
+		return futureEntries.length > 0 ? { price: futureEntries[0].price, calenderID: futureEntries[0].id } : null;
+	}
+
+	// If there's a calendar entry for today, return its price and ID
+	return { price: todayPrice.price, calenderID: todayPrice.id };
+};
+
+const HomeStayDetail = () => {
 	const { id } = useParams() ?? {};
+	const router = useRouter();
+	const [voucherCode, setVoucherCode] = useState('');
+	const [isOnline, setIsOnline] = useState(true); // Default to online payment
+
+	const { dataProfile } = useAuth();
 
 	const { data, isLoading, error } = useQuery({
 		queryKey: ['homeStayDetail', id],
@@ -26,6 +118,39 @@ const homeStayDetail = () => {
 	});
 
 	const homestay = data || [];
+
+	// Setup mutation for booking
+	const bookingMutation = useMutation({
+		mutationFn: (bookingData) => createBooking(dataProfile.id, bookingData),
+		onSuccess: (data) => {
+			toast.success('Booking successful!');
+			// Redirect to booking confirmation or payment page
+			router.push(`/booking/confirmation/${data.id}`);
+		},
+		onError: (error) => {
+			toast.error(`Booking failed: ${error.message}`);
+		},
+	});
+
+	const handleBookNow = () => {
+		const priceData = getPriceForToday(homestay.calendar);
+
+		if (!priceData || !priceData.calenderID) {
+			toast.error('No available dates for booking');
+			return;
+		}
+
+		// Make sure the calenderID is in the correct format from the Postman example
+		const bookingData = {
+			calenders: [{ calenderID: priceData.calenderID }],
+			voucherCode: voucherCode || null,
+			isOnline: isOnline,
+		};
+
+		console.log('Booking data:', bookingData);
+
+		bookingMutation.mutate(bookingData);
+	};
 
 	if (isLoading) {
 		return (
@@ -70,12 +195,8 @@ const homeStayDetail = () => {
 		);
 	}
 
-	const getPriceForToday = (calendar) => {
-		const todayPrice = calendar?.find((item) => item.date.slice(0, 10) === currentDate);
-		return todayPrice ? todayPrice.price : null;
-	};
-
-	const priceForToday = getPriceForToday(homestay.calendar);
+	const priceData = getPriceForToday(homestay.calendar);
+	const priceForToday = priceData ? priceData.price : null;
 
 	return (
 		<MainLayout>
@@ -142,9 +263,6 @@ const homeStayDetail = () => {
 								</PhotoProvider>
 								<div className='flex justify-between flex-col md:flex-row'>
 									<div className='flex flex-col gap-2'>
-										{/* <Badge className='bg-blue-100 text-blue-800 hover:bg-blue-100 w-fit'>
-											Apartment
-										</Badge> */}
 										<h1 className='text-xl md:text-2xl font-bold'>{homestay.name}</h1>
 										<div className='flex items-center text-gray-500 text-sm md:text-base'>
 											<MapPin className='w-4 h-4 mr-1' />
@@ -180,11 +298,40 @@ const homeStayDetail = () => {
 								</div>
 
 								<div className='flex flex-col gap-2'>
-									<h2 className='text-base md:text-lg font-semibold'>Facility</h2>
+									<h2 className='text-base md:text-lg font-semibold'>Amenities</h2>
+									{homestay.amenities?.length > 0 ? (
+										<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'>
+											{homestay.amenities.map((ameniti) => (
+												<div
+													key={ameniti.id}
+													className='flex items-center p-3 bg-gray-50 rounded-lg shadow-sm'
+												>
+													{getAmenitiesIcon(ameniti.name)}
+													<span className='ml-2 text-gray-700'>{ameniti.name}</span>
+												</div>
+											))}
+										</div>
+									) : (
+										<span>No amenities</span>
+									)}
+								</div>
+
+								<div className='flex flex-col gap-2'>
+									<h2 className='text-base md:text-lg font-semibold'>Facilities</h2>
 									{homestay.facility?.length > 0 ? (
-										<div className='grid grid-cols-4 gap-4'>
-											{homestay.facility.map((facility, index) => (
-												<span key={index}>{facility}</span>
+										<div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4'>
+											{homestay.facility.map((facility) => (
+												<div
+													key={facility.facilityID}
+													className='flex items-center p-3 bg-gray-50 rounded-lg shadow-sm'
+												>
+													<span className='ml-2 text-gray-700'>{facility.name}</span>
+													{facility.description && (
+														<span className='text-xs text-gray-500 ml-2'>
+															({facility.description})
+														</span>
+													)}
+												</div>
 											))}
 										</div>
 									) : (
@@ -196,7 +343,60 @@ const homeStayDetail = () => {
 									<h2 className='text-base md:text-lg font-semibold'>Description</h2>
 									<p className='text-gray-600 text-sm md:text-base'>{homestay.description}</p>
 								</div>
-								<Button className='w-full bg-blue-600 hover:bg-blue-700 text-white'>Book Now</Button>
+
+								{/* Add voucher input */}
+								<div className='flex flex-col gap-2'>
+									<h2 className='text-base md:text-lg font-semibold'>Have a voucher?</h2>
+									<div className='flex gap-2'>
+										<input
+											type='text'
+											value={voucherCode}
+											onChange={(e) => setVoucherCode(e.target.value)}
+											placeholder='Enter voucher code'
+											className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm'
+										/>
+									</div>
+								</div>
+
+								{/* Payment method selection */}
+								<div className='flex flex-col gap-2'>
+									<h2 className='text-base md:text-lg font-semibold'>Payment Method</h2>
+									<div className='flex gap-4'>
+										<label className='flex items-center space-x-2 cursor-pointer'>
+											<input
+												type='radio'
+												checked={isOnline}
+												onChange={() => setIsOnline(true)}
+												className='form-radio h-4 w-4 text-blue-600'
+											/>
+											<span>Online Payment</span>
+										</label>
+										{/* <label className='flex items-center space-x-2 cursor-pointer'>
+											<input
+												type='radio'
+												checked={!isOnline}
+												onChange={() => setIsOnline(false)}
+												className='form-radio h-4 w-4 text-blue-600'
+											/>
+											<span>Cash on Arrival</span>
+										</label> */}
+									</div>
+								</div>
+
+								<Button
+									className='w-full bg-blue-600 hover:bg-blue-700 text-white'
+									onClick={handleBookNow}
+									disabled={bookingMutation.isPending || !priceData}
+								>
+									{bookingMutation.isPending ? (
+										<>
+											<Loader2 className='mr-2 h-4 w-4 animate-spin' />
+											Processing...
+										</>
+									) : (
+										'Book Now'
+									)}
+								</Button>
 							</div>
 						</div>
 					</div>
@@ -206,4 +406,4 @@ const homeStayDetail = () => {
 	);
 };
 
-export default homeStayDetail;
+export default HomeStayDetail;

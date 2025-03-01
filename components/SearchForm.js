@@ -1,25 +1,108 @@
 'use client';
 
-import { CalendarIcon, MapPin, Users } from 'lucide-react';
+import { CalendarIcon, Check, ChevronsUpDown, MapPin, Users } from 'lucide-react';
 import { format } from 'date-fns';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Input } from './components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover';
 import { Button } from './components/ui/button';
 import { cn } from './lib/utils';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
+import { getCityList } from 'pages/api/city/getCityList';
+import { useQuery } from '@tanstack/react-query';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command';
 
 export default function SearchForm() {
+	const router = useRouter();
 	const [range, setRange] = useState({ from: undefined, to: undefined });
+	const [openCity, setOpenCity] = useState(false);
+	const [selectedCity, setSelectedCity] = useState('');
+	const [isSearching, setIsSearching] = useState(false);
+
+	const {
+		data: cities,
+		isLoading,
+		error: citiesError,
+	} = useQuery({
+		queryKey: ['cities'],
+		queryFn: getCityList,
+	});
+
+	// Handle search
+	const handleSearch = () => {
+		if (!selectedCity) {
+			return;
+		}
+
+		setIsSearching(true);
+
+		// Build the search URL with query parameters
+		let searchUrl = `/searchList?city=${encodeURIComponent(selectedCity)}`;
+
+		// Add date range parameters if available
+		if (range.from) {
+			searchUrl += `&from=${range.from.toISOString()}`;
+		}
+
+		if (range.to) {
+			searchUrl += `&to=${range.to.toISOString()}`;
+		}
+
+		// Redirect to the search results page
+		router.push(searchUrl);
+	};
 
 	return (
 		<div className='w-full'>
 			<div className='bg-white rounded-lg border-2 border-red-500 p-4 flex flex-col md:flex-row gap-4'>
 				{/* Location */}
-				<div className='flex-1 relative'>
-					<MapPin className='absolute left-3 top-3 h-5 w-5 text-gray-400' />
-					<Input type='text' placeholder='Where are you going?' className='pl-10 h-12 border-gray-300' />
+				<div className='flex-1'>
+					<Popover open={openCity} onOpenChange={setOpenCity}>
+						<PopoverTrigger asChild>
+							<Button
+								variant='outline'
+								role='combobox'
+								aria-expanded={openCity}
+								className='w-full justify-between h-12 border-gray-300'
+							>
+								<div className='flex items-center'>
+									<MapPin className='mr-2 h-5 w-5 text-gray-400' />
+									{selectedCity || 'Where are you going?'}
+								</div>
+								<ChevronsUpDown className='opacity-50' />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className='w-full p-0'>
+							<Command>
+								<CommandInput placeholder='Search city...' className='h-9' />
+								<CommandList>
+									<CommandEmpty>No city found.</CommandEmpty>
+									<CommandGroup>
+										{cities?.map((city) => (
+											<CommandItem
+												key={city}
+												value={city}
+												onSelect={(currentValue) => {
+													setSelectedCity(currentValue === selectedCity ? '' : currentValue);
+													setOpenCity(false);
+												}}
+											>
+												{city}
+												<Check
+													className={cn(
+														'ml-auto',
+														selectedCity === city ? 'opacity-100' : 'opacity-0'
+													)}
+												/>
+											</CommandItem>
+										))}
+									</CommandGroup>
+								</CommandList>
+							</Command>
+						</PopoverContent>
+					</Popover>
 				</div>
 
 				{/* Date Range Picker */}
@@ -67,19 +150,14 @@ export default function SearchForm() {
 					</Popover>
 				</div>
 
-				{/* Guests */}
-				<div className='flex-1'>
-					<Button
-						variant='outline'
-						className='w-full justify-start h-12 font-normal text-gray-600 border-gray-300'
-					>
-						<Users className='mr-2 h-5 w-5' />
-						<span>1 adult • 0 children • 1 room</span>
-					</Button>
-				</div>
-
 				{/* Search Button */}
-				<Button className='h-12 px-8 bg-[#006CE4] hover:bg-[#006CE4]/90 text-white font-medium'>Search</Button>
+				<Button
+					className='h-12 px-8 bg-[#006CE4] hover:bg-[#006CE4]/90 text-white font-medium'
+					onClick={handleSearch}
+					disabled={isSearching || !selectedCity}
+				>
+					{isSearching ? 'Searching...' : 'Search'}
+				</Button>
 			</div>
 		</div>
 	);

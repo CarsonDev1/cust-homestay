@@ -15,6 +15,13 @@ import {
 } from './components/ui/dropdown-menu';
 import { Button } from './components/ui/button';
 
+// Define the navigation items with their paths
+const NAV_ITEMS = [
+	{ href: '/home-stay', label: 'Homestay' },
+	{ href: '/posts', label: 'Posts' },
+	{ href: '/online-experiences', label: 'Online Experiences' },
+];
+
 const Header = () => {
 	const router = useRouter();
 	const { dataProfile, logout } = useAuth();
@@ -25,6 +32,11 @@ const Header = () => {
 		if (!location.trim()) return;
 		router.push(`/search?location=${location.trim()}`);
 		setLocation('');
+	};
+
+	const isActivePath = (path) => {
+		// Exact match or nested routes (e.g., /home-stay/details)
+		return router.pathname === path || router.pathname.startsWith(`${path}/`);
 	};
 
 	return (
@@ -41,15 +53,18 @@ const Header = () => {
 				</div>
 
 				<nav className={`hidden md:flex space-x-8 text-sm font-medium text-gray-600`}>
-					<Link href='/home-stay' className='hover:text-pink-500 transition-colors'>
-						Homestay
-					</Link>
-					<Link href='#' className='hover:text-pink-500 transition-colors'>
-						Posts
-					</Link>
-					<Link href='#' className='hover:text-pink-500 transition-colors'>
-						Online Experiences
-					</Link>
+					{NAV_ITEMS.map((item) => (
+						<Link
+							key={item.href}
+							href={item.href}
+							className={`
+								transition-colors
+								${isActivePath(item.href) ? 'text-pink-500 font-bold' : 'hover:text-pink-500 text-gray-600'}
+							`}
+						>
+							{item.label}
+						</Link>
+					))}
 				</nav>
 
 				<div className='flex items-center gap-3'>
