@@ -125,7 +125,7 @@ const HomeStayDetail = () => {
 		onSuccess: (data) => {
 			toast.success('Booking successful!');
 			// Redirect to booking confirmation or payment page
-			router.push(`/booking/confirmation/${data.id}`);
+			router.push(`/booking/confirmation/${data.bookingID}`);
 		},
 		onError: (error) => {
 			toast.error(`Booking failed: ${error.message}`);
