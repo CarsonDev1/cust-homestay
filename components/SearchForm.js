@@ -106,7 +106,7 @@ export default function SearchForm() {
 				</div>
 
 				{/* Date Range Picker */}
-				<div className='flex-1'>
+				{/* <div className='flex-1'>
 					<Popover>
 						<PopoverTrigger asChild>
 							<Button
@@ -148,7 +148,7 @@ export default function SearchForm() {
 							/>
 						</PopoverContent>
 					</Popover>
-				</div>
+				</div> */}
 
 				{/* Search Button */}
 				<Button

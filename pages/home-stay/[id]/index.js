@@ -125,7 +125,7 @@ const HomeStayDetail = () => {
 		onSuccess: (data) => {
 			toast.success('Booking successful!');
 			// Redirect to booking confirmation or payment page
-			router.push(`/booking/confirmation/${data.bookingID}`);
+			router.push(`/payment/?bookingID=${data.bookingID}`);
 		},
 		onError: (error) => {
 			toast.error(`Booking failed: ${error.message}`);
@@ -133,6 +133,12 @@ const HomeStayDetail = () => {
 	});
 
 	const handleBookNow = () => {
+		// If already booked, don't proceed
+		if (homestay.isBooked) {
+			toast.error('This homestay is already booked');
+			return;
+		}
+
 		const priceData = getPriceForToday(homestay.calendar);
 
 		if (!priceData || !priceData.calenderID) {
@@ -217,6 +223,12 @@ const HomeStayDetail = () => {
 													height={800}
 												/>
 											</PhotoView>
+
+											{homestay.isBooked && (
+												<div className='absolute top-0 left-0 bg-red-500 text-white font-bold px-4 py-2 rounded-br-lg'>
+													BOOKED
+												</div>
+											)}
 										</div>
 
 										<div className='md:hidden'>
@@ -354,6 +366,7 @@ const HomeStayDetail = () => {
 											onChange={(e) => setVoucherCode(e.target.value)}
 											placeholder='Enter voucher code'
 											className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm'
+											disabled={homestay.isBooked}
 										/>
 									</div>
 								</div>
@@ -368,6 +381,7 @@ const HomeStayDetail = () => {
 												checked={isOnline}
 												onChange={() => setIsOnline(true)}
 												className='form-radio h-4 w-4 text-blue-600'
+												disabled={homestay.isBooked}
 											/>
 											<span>Online Payment</span>
 										</label>
@@ -383,16 +397,24 @@ const HomeStayDetail = () => {
 									</div>
 								</div>
 
+								{homestay.isBooked && (
+									<div className='bg-red-50 border border-red-200 text-red-600 font-medium text-center p-3 rounded-md'>
+										This homestay is already booked and not available for reservation.
+									</div>
+								)}
+
 								<Button
 									className='w-full bg-blue-600 hover:bg-blue-700 text-white'
 									onClick={handleBookNow}
-									disabled={bookingMutation.isPending || !priceData}
+									disabled={bookingMutation.isPending || !priceData || homestay.isBooked}
 								>
 									{bookingMutation.isPending ? (
 										<>
 											<Loader2 className='mr-2 h-4 w-4 animate-spin' />
 											Processing...
 										</>
+									) : homestay.isBooked ? (
+										'Not Available'
 									) : (
 										'Book Now'
 									)}
