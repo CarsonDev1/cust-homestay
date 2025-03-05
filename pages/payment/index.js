@@ -42,8 +42,6 @@ const PaymentPage = () => {
 			<div className='sec-com'>
 				<div className='container-lg'>
 					<div className='py-4'>
-						<h2 className='mb-4'>Payment Page</h2>
-
 						{bookingID ? (
 							<div className='mb-3'>
 								{paymentMutation.isPending && (

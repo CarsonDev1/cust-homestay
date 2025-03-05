@@ -107,9 +107,17 @@ const HomeStayDetail = () => {
 	const { id } = useParams() ?? {};
 	const router = useRouter();
 	const [voucherCode, setVoucherCode] = useState('');
-	const [isOnline, setIsOnline] = useState(true); // Default to online payment
-
+	const [isOnline, setIsOnline] = useState(true);
+	const [selectedDates, setSelectedDates] = useState([]);
 	const { dataProfile } = useAuth();
+
+	const toggleDateSelection = (calenderID) => {
+		setSelectedDates((prevSelected) =>
+			prevSelected.includes(calenderID)
+				? prevSelected.filter((id) => id !== calenderID)
+				: [...prevSelected, calenderID]
+		);
+	};
 
 	const { data, isLoading, error } = useQuery({
 		queryKey: ['homeStayDetail', id],
@@ -119,42 +127,35 @@ const HomeStayDetail = () => {
 
 	const homestay = data || [];
 
-	// Setup mutation for booking
 	const bookingMutation = useMutation({
 		mutationFn: (bookingData) => createBooking(dataProfile.id, bookingData),
 		onSuccess: (data) => {
 			toast.success('Booking successful!');
-			// Redirect to booking confirmation or payment page
 			router.push(`/payment/?bookingID=${data.bookingID}`);
 		},
 		onError: (error) => {
-			toast.error(`Booking failed: ${error.message}`);
+			toast.error(`Booking failed: ${error}`);
 		},
 	});
 
 	const handleBookNow = () => {
-		// If already booked, don't proceed
 		if (homestay.isBooked) {
 			toast.error('This homestay is already booked');
 			return;
 		}
 
-		const priceData = getPriceForToday(homestay.calendar);
-
-		if (!priceData || !priceData.calenderID) {
-			toast.error('No available dates for booking');
+		if (selectedDates.length === 0) {
+			toast.error('Please select at least one date to book.');
 			return;
 		}
 
-		// Make sure the calenderID is in the correct format from the Postman example
 		const bookingData = {
-			calenders: [{ calenderID: priceData.calenderID }],
+			calenders: selectedDates.map((calenderID) => ({ calenderID })),
 			voucherCode: voucherCode || null,
 			isOnline: isOnline,
 		};
 
 		console.log('Booking data:', bookingData);
-
 		bookingMutation.mutate(bookingData);
 	};
 
@@ -402,6 +403,33 @@ const HomeStayDetail = () => {
 										This homestay is already booked and not available for reservation.
 									</div>
 								)}
+
+								<div className='flex flex-col gap-2'>
+									<h2 className='text-base md:text-lg font-semibold'>Select Booking Dates</h2>
+									<div className='grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2'>
+										{homestay.calendar
+											?.slice()
+											?.filter(
+												(date) =>
+													new Date(date.date).setHours(0, 0, 0, 0) >=
+														new Date().setHours(0, 0, 0, 0) && !date.isDeleted
+											)
+											.sort((a, b) => new Date(a.date) - new Date(b.date))
+											.map((date) => (
+												<button
+													key={date.id}
+													onClick={() => toggleDateSelection(date.id)}
+													className={`px-3 py-2 rounded-md border ${
+														selectedDates.includes(date.id)
+															? 'bg-blue-600 text-white'
+															: 'bg-gray-100'
+													}`}
+												>
+													{new Date(date.date).toLocaleDateString('vi')}
+												</button>
+											))}
+									</div>
+								</div>
 
 								<Button
 									className='w-full bg-blue-600 hover:bg-blue-700 text-white'

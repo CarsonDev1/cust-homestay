@@ -21,7 +21,7 @@ const MainLayout = ({ children }) => {
 					<Header />
 					{children}
 				</div>
-				<Toaster />
+				<Toaster position='top-right' richColors />
 				<ToastContainer />
 			</main>
 		</div>
