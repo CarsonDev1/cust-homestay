@@ -29,10 +29,8 @@ export function AppSidebar() {
 	const { logout, dataProfile } = useAuth();
 	const pathname = usePathname();
 
-	console.log(dataProfile);
-
 	return (
-		<Sidebar className='z-0'>
+		<Sidebar className='z-0 bg-white'>
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarGroupLabel className='text-base'>Manager Homestay</SidebarGroupLabel>

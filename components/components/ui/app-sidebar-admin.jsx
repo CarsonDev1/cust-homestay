@@ -29,7 +29,7 @@ export function AppSidebarAmin() {
 	const pathname = usePathname();
 
 	return (
-		<Sidebar className='z-0'>
+		<Sidebar className='z-0 bg-white'>
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarGroupLabel className='text-base'>Admin Homestay</SidebarGroupLabel>

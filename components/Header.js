@@ -59,7 +59,7 @@ const Header = () => {
 							href={item.href}
 							className={`
 								transition-colors
-								${isActivePath(item.href) ? 'text-pink-500 font-bold' : 'hover:text-pink-500 text-gray-600'}
+								${isActivePath(item.href) ? 'text-blue-500 font-bold' : 'hover:text-blue-500 text-gray-600'}
 							`}
 						>
 							{item.label}
@@ -73,11 +73,10 @@ const Header = () => {
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<div
-									className={`flex items-center gap-2 px-3 py-1 rounded-full border cursor-pointer hover:bg-gray-100
+									className={`flex items-center gap-2 cursor-pointer hover:bg-gray-100
 									text-slate-600 hover:text-slate-600
 									`}
 								>
-									<Menu className='w-4 h-4' />
 									{dataProfile.avatar ? (
 										<Image
 											src={dataProfile.avatar}
@@ -111,7 +110,29 @@ const Header = () => {
 							</Button>
 						</SheetTrigger>
 						<SheetContent side='left'>
-							<MobileNav />
+							<div className='flex items-center cursor-pointer gap-2' onClick={() => router.push('/')}>
+								<Image
+									src='/images/logo.jpg'
+									alt='logo'
+									width={40}
+									height={40}
+									className='rounded-full shadow-xl border border-slate-500'
+								/>
+							</div>
+							<nav className={`flex md:hidden mt-4 flex-col gap-4 text-sm font-medium text-gray-600`}>
+								{NAV_ITEMS.map((item) => (
+									<Link
+										key={item.href}
+										href={item.href}
+										className={`
+								transition-colors
+								${isActivePath(item.href) ? 'text-blue-500 font-bold' : 'hover:text-blue-500 text-gray-600'}
+							`}
+									>
+										{item.label}
+									</Link>
+								))}
+							</nav>
 						</SheetContent>
 					</Sheet>
 				</div>

@@ -7,7 +7,6 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { Wifi, Car, PocketIcon as Pool, Star, Check, Coffee } from 'lucide-react';
 
-// Helper function to format dates consistently for comparison
 const formatDateForComparison = (dateInput) => {
 	const date = new Date(dateInput);
 	return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(
@@ -17,17 +16,13 @@ const formatDateForComparison = (dateInput) => {
 };
 
 const getPriceForToday = (calendar) => {
-	// If no calendar array or empty, return null (Decommission)
 	if (!calendar || calendar.length === 0) return null;
 
 	const currentDate = formatDateForComparison(new Date());
 
-	// Find today's price entry
 	const todayPrice = calendar?.find((item) => formatDateForComparison(item.date) === currentDate && !item.isDeleted);
 
-	// If there's no calendar entry for today, check if all calendar entries are expired
 	if (!todayPrice) {
-		// Check if all calendar entries are in the past
 		const allExpired = calendar.every((item) => {
 			const entryDate = new Date(item.date);
 			entryDate.setHours(0, 0, 0, 0);
@@ -36,11 +31,7 @@ const getPriceForToday = (calendar) => {
 			return entryDate < today || item.isDeleted;
 		});
 
-		// If all entries are expired, return null (Decommission)
 		if (allExpired) return null;
-
-		// If there's no entry for today but some future entries exist,
-		// find the next valid entry (first future date)
 		const futureEntries = calendar
 			.filter((item) => {
 				const entryDate = new Date(item.date);
@@ -51,22 +42,17 @@ const getPriceForToday = (calendar) => {
 			})
 			.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-		// Return the price of the next valid date or null if none found
 		return futureEntries.length > 0 ? futureEntries[0].price : null;
 	}
-
-	// If there's a calendar entry for today, return its price
 	return todayPrice.price;
 };
 
-// Get appropriate icon for an amenity
 const getAmenityIcon = (name) => {
 	const lowercaseName = name.toLowerCase();
 	if (lowercaseName.includes('wifi')) return <Wifi className='w-5 h-5' />;
 	if (lowercaseName.includes('parking')) return <Car className='w-5 h-5' />;
 	if (lowercaseName.includes('pool') || lowercaseName.includes('swimming')) return <Pool className='w-5 h-5' />;
 	if (lowercaseName.includes('coffee') || lowercaseName.includes('breakfast')) return <Coffee className='w-5 h-5' />;
-	// Default icon for other amenities
 	return <Check className='w-5 h-5' />;
 };
 
