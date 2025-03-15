@@ -4,16 +4,17 @@ import Router from 'next/router';
 import 'nprogress/nprogress.css';
 import { useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
-import { AuthProvider } from 'context/AuthProvider';
-import Provider from 'utils/Provider';
 import { SessionProvider } from 'next-auth/react';
 import '../styles/globals.css';
 import 'react-toastify/dist/ReactToastify.css';
+import { AuthProvider } from 'context/AuthProvider';
+import Provider from 'utils/Provider';
+import { appWithTranslation } from 'next-i18next';
 
 // Cấu hình NProgress
 NProgress.configure({ showSpinner: false });
 
-export default function MyApp({ Component, pageProps, session }) {
+function MyApp({ Component, pageProps, session }) {
 	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
@@ -53,7 +54,7 @@ export default function MyApp({ Component, pageProps, session }) {
 				</div>
 			)}
 			<Provider>
-				<AuthProvider dynamic>
+				<AuthProvider>
 					<SessionProvider session={session}>
 						<Component {...pageProps} />
 						<ToastContainer />
@@ -63,3 +64,5 @@ export default function MyApp({ Component, pageProps, session }) {
 		</div>
 	);
 }
+
+export default appWithTranslation(MyApp);

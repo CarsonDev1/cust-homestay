@@ -2,34 +2,68 @@ import Link from 'next/link';
 import { Button } from './components/ui/button';
 import SearchForm from './SearchForm';
 import { useAuth } from 'context/AuthProvider';
+import { useTranslation } from 'next-i18next';
+import { ChevronRight } from 'lucide-react';
 
 const Hero = () => {
 	const { dataProfile } = useAuth();
+	const { t } = useTranslation('common');
+
 	return (
 		<section
-			className='relative bg-cover bg-center text-light py-20 flex flex-col gap-7'
+			className='relative min-h-[600px] flex flex-col justify-center overflow-hidden bg-cover bg-center'
 			style={{
 				backgroundImage:
-					"linear-gradient(to bottom, rgba(10, 12, 44, 0.5) 3rem, transparent 10rem), url('/images/hero.jpg')",
+					"linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('/images/hero.jpg')",
+				backgroundPosition: 'center 30%',
 			}}
 		>
-			<div className='flex container-lg'>
-				<div className='max-w-[var(--maxWidth)] text-white flex flex-col gap-2'>
-					<h1 className='font-extrabold text-[clamp(2rem,5.5vw,3.25rem)] leading-none'>
-						A lifetime of discounts? It's Genius
+			{/* Decorative overlay gradient */}
+			<div className='absolute inset-0 bg-blue-900/20 mix-blend-multiply'></div>
+
+			<div className='container-lg z-10 flex flex-col gap-10 py-16'>
+				<div className='max-w-3xl text-white flex flex-col gap-5'>
+					<h1 className='font-extrabold text-[clamp(2.5rem,6vw,3rem)] leading-tight tracking-tight'>
+						{t('hero.title')}
+						<span className='block text-blue-300'>HomeStays</span>
 					</h1>
-					<p>
-						Get rewarded for your travels - unlock instant savings of 10% or more with a free Runa Homestay
-					</p>
+					<p className='text-lg text-gray-100 font-light max-w-lg'>{t('hero.subtitle')}</p>
+
 					{!dataProfile && (
-						<Link href='/auth/register' className='w-fit'>
-							<Button className='w-fit'>Sign in / Register</Button>
+						<div className='flex flex-wrap gap-3 mt-2'>
+							<Link href='/auth/register'>
+								<Button size='lg' className='bg-blue-600 hover:bg-blue-700 text-white font-medium px-6'>
+									{t('register')}
+								</Button>
+							</Link>
+							<Link href='/auth/login'>
+								<Button
+									size='lg'
+									variant='ghost'
+									className='border-white text-white hover:bg-opacity-0 hover:text-white font-medium px-6'
+								>
+									{t('login')}
+								</Button>
+							</Link>
+						</div>
+					)}
+
+					{dataProfile && (
+						<Link href='/home-stay' className='group w-fit'>
+							<Button
+								size='lg'
+								className='border-white border text-white hover:bg-white/10 font-medium px-6'
+							>
+								Explore HomeStays
+								<ChevronRight className='ml-1 h-4 w-4 transition-transform group-hover:translate-x-1' />
+							</Button>
 						</Link>
 					)}
 				</div>
-			</div>
-			<div className='container-lg mx-auto'>
-				<SearchForm />
+
+				<div className='w-full max-w-4xl mx-auto mt-4'>
+					<SearchForm />
+				</div>
 			</div>
 		</section>
 	);

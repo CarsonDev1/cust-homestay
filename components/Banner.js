@@ -3,15 +3,17 @@ import Image from 'next/image';
 
 const Banner = () => {
 	return (
-		<div className='container-lg'>
-			<BannerSection>
-				<span>
-					<h2>Not sure where to go? Perfect.</h2>
-					<a href='#' className='btn btn-dark'>
-						{"I'm flexible"}
-					</a>
-				</span>
-			</BannerSection>
+		<div className='sec-com'>
+			<div className='container-lg'>
+				<BannerSection>
+					<span>
+						<h2>Not sure where to go? Perfect.</h2>
+						<a href='#' className='btn btn-dark'>
+							{"I'm flexible"}
+						</a>
+					</span>
+				</BannerSection>
+			</div>
 		</div>
 	);
 };

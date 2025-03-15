@@ -8,19 +8,30 @@ import MediumCards from '@/components/MediumCards';
 import LargeCards from '@/components/LargeCards';
 import { live, discover } from '../data';
 import MainLayout from './layout';
+import { useTranslation } from 'next-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import AmenityList from '@/components/AmenityList';
 
 export default function Home() {
+	const { t } = useTranslation('common');
+
 	return (
 		<MainLayout>
 			<main>
 				<Hero />
 				<MediumCards />
+				<AmenityList />
 				<Explore />
 				<Banner />
-				<LargeCards {...discover} />
-				<Hosting />
 			</main>
-			<Footer />
 		</MainLayout>
 	);
+}
+
+export async function getStaticProps({ locale }) {
+	return {
+		props: {
+			...(await serverSideTranslations(locale, ['common', 'home'])),
+		},
+	};
 }
