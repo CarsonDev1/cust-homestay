@@ -669,9 +669,14 @@ const HomeStayDetail = () => {
 															<DropdownMenuItem
 																key={voucher.voucherID}
 																onClick={() => handleSelectVoucher(voucher.code)}
-																className='cursor-pointer hover:bg-blue-50'
+																className={`relative cursor-pointer hover:bg-blue-50 ${
+																	voucher.isUser
+																		? 'cursor-not-allowed opacity-75'
+																		: ''
+																}`}
+																disabled={voucher.isUser}
 															>
-																<div className='flex items-center justify-between w-full'>
+																<div className='relative flex items-center justify-between w-full'>
 																	<div className='flex flex-col'>
 																		<span className='font-medium'>
 																			{voucher.code}
@@ -680,13 +685,38 @@ const HomeStayDetail = () => {
 																			{voucher.discount}% off
 																		</span>
 																	</div>
-																	<Badge
-																		variant='outline'
-																		className='ml-2 text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100'
-																	>
-																		Apply
-																	</Badge>
+
+																	{voucher.isUser ? (
+																		<div className='flex items-center px-3 py-1 text-xs font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded-full'>
+																			<svg
+																				xmlns='http://www.w3.org/2000/svg'
+																				viewBox='0 0 20 20'
+																				fill='currentColor'
+																				className='w-3 h-3 mr-1 text-gray-500'
+																			>
+																				<path
+																					fillRule='evenodd'
+																					d='M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5.5a.75.75 0 001.5 0V5z'
+																					clipRule='evenodd'
+																				/>
+																			</svg>
+																			Used
+																		</div>
+																	) : (
+																		<Badge
+																			variant='outline'
+																			className='ml-2 text-blue-600 border-blue-200 bg-blue-50 hover:bg-blue-100'
+																		>
+																			Apply
+																		</Badge>
+																	)}
 																</div>
+
+																{voucher.isUser && (
+																	<div className='absolute inset-0 bg-white pointer-events-none bg-opacity-10'>
+																		<div className='absolute top-0 left-0 w-full h-full border-2 border-gray-200 rounded-md opacity-25'></div>
+																	</div>
+																)}
 															</DropdownMenuItem>
 														))
 													) : (

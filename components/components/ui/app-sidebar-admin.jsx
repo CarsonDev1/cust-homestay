@@ -20,7 +20,7 @@ const items = [
 	{ title: 'Homestay', url: '/admin/homestay', icon: Hotel },
 	{ title: 'Facility', url: '/admin/facility', icon: Boxes },
 	{ title: 'Amenity', url: '/admin/amenity', icon: Bath },
-	{ title: 'Settings', url: '/settings', icon: Settings },
+	{ title: 'Booking', url: '/admin/booking', icon: Settings },
 	{ title: 'Account', url: '/admin/profile', icon: User },
 ];
 
@@ -66,8 +66,8 @@ export function AppSidebarAmin() {
 							<DropdownMenuTrigger asChild>
 								<SidebarMenuButton>
 									{isLoading ? (
-										<div className='absolute inset-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
-											<div className='size-3 border-t-2 border-blue-500 rounded-full animate-spin'></div>
+										<div className='absolute inset-0 z-50 flex items-center justify-center w-full h-full bg-white bg-opacity-50'>
+											<div className='border-t-2 border-blue-500 rounded-full size-3 animate-spin'></div>
 										</div>
 									) : (
 										<>
@@ -78,7 +78,7 @@ export function AppSidebarAmin() {
 														width={50}
 														height={50}
 														alt='avt'
-														className='object-contain size-8 rounded-md'
+														className='object-contain rounded-md size-8'
 													/>
 												) : (
 													<User2 className='size-8' />
