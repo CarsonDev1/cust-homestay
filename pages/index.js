@@ -11,6 +11,7 @@ import MainLayout from './layout';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import AmenityList from '@/components/AmenityList';
+import VoucherCard from '@/components/VoucherCard';
 
 export default function Home() {
 	const { t } = useTranslation('common');
@@ -20,6 +21,7 @@ export default function Home() {
 			<main>
 				<Hero />
 				<MediumCards />
+				<VoucherCard />
 				<AmenityList />
 				<Explore />
 				<Banner />
