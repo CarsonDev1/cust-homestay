@@ -762,7 +762,7 @@ const HomeStayDetail = () => {
 										</div>
 									</label>
 
-									<label className='flex items-center p-3 transition-colors border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50'>
+									{/* <label className='flex items-center p-3 transition-colors border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50'>
 										<input
 											type='radio'
 											checked={!isOnline}
@@ -776,7 +776,7 @@ const HomeStayDetail = () => {
 												Pay in cash when you arrive at the property
 											</p>
 										</div>
-									</label>
+									</label> */}
 								</div>
 							</div>
 
