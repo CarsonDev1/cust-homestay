@@ -16,11 +16,11 @@ import { useAuth } from 'context/AuthProvider';
 import Image from 'next/image';
 
 const items = [
-	{ title: 'Home', url: '/manager', icon: Home },
-	{ title: 'Posts', url: '/manager/posts', icon: Newspaper },
-	{ title: 'Users', url: '/manager/users', icon: Users },
-	{ title: 'Voucher', url: '/manager/voucher', icon: Ticket },
-	{ title: 'Account', url: '/manager/profile', icon: User },
+	{ title: 'Home', url: '/admin', icon: Home },
+	{ title: 'Posts', url: '/admin/posts', icon: Newspaper },
+	{ title: 'Users', url: '/admin/users', icon: Users },
+	{ title: 'Voucher', url: '/admin/voucher', icon: Ticket },
+	{ title: 'Account', url: '/admin/profile', icon: User },
 ];
 
 export function AppSidebar() {
@@ -31,13 +31,12 @@ export function AppSidebar() {
 		<Sidebar className='z-0 bg-white'>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel className='text-base'>Manager Homestay</SidebarGroupLabel>
+					<SidebarGroupLabel className='text-base'>Admin Homestay</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{items.map((item) => {
 								const isActive =
-									pathname === item.url ||
-									(item.url !== '/manager' && pathname?.startsWith(item.url));
+									pathname === item.url || (item.url !== '/admin' && pathname?.startsWith(item.url));
 
 								return (
 									<SidebarMenuItem key={item.title}>

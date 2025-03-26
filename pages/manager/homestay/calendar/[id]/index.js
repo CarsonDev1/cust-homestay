@@ -8,7 +8,7 @@ import { Calendar, ArrowLeft, Plus, Trash2, Edit2 } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import { Input } from '@/components/components/ui/input';
 import Swal from 'sweetalert2';
-import AdminLayout from 'pages/admin/layout';
+import AdminLayout from 'pages/manager/layout';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/components/ui/card';
 import {
 	Dialog,

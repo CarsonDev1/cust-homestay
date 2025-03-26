@@ -1,5 +1,18 @@
 import { usePathname } from 'next/navigation';
-import { Bath, Book, Boxes, ChevronUp, DollarSign, Home, Hotel, Search, Settings, User, User2 } from 'lucide-react';
+import {
+	Bath,
+	Book,
+	Boxes,
+	ChevronUp,
+	DollarSign,
+	Home,
+	Hotel,
+	Search,
+	Settings,
+	Text,
+	User,
+	User2,
+} from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -16,14 +29,15 @@ import { useAuth } from 'context/AuthProvider';
 import Image from 'next/image';
 
 const items = [
-	{ title: 'Home', url: '/admin', icon: Home },
-	{ title: 'Homestay', url: '/admin/homestay', icon: Hotel },
-	{ title: 'Facility', url: '/admin/facility', icon: Boxes },
-	{ title: 'Amenity', url: '/admin/amenity', icon: Bath },
-	{ title: 'Booking', url: '/admin/booking', icon: Settings },
-	{ title: 'Posts', url: '/admin/posts', icon: Book },
-	{ title: 'Refund', url: '/admin/refund', icon: DollarSign },
-	{ title: 'Account', url: '/admin/profile', icon: User },
+	{ title: 'Home', url: '/manager', icon: Home },
+	{ title: 'Homestay', url: '/manager/homestay', icon: Hotel },
+	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
+	{ title: 'Amenity', url: '/manager/amenity', icon: Bath },
+	{ title: 'Booking', url: '/manager/booking', icon: Settings },
+	{ title: 'Posts', url: '/manager/posts', icon: Book },
+	{ title: 'Refund', url: '/manager/refund', icon: DollarSign },
+	{ title: 'Feedbacks', url: '/manager/feedbacks', icon: Text },
+	{ title: 'Account', url: '/manager/profile', icon: User },
 ];
 
 export function AppSidebarAmin() {
@@ -34,12 +48,13 @@ export function AppSidebarAmin() {
 		<Sidebar className='z-0 bg-white'>
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel className='text-base'>Admin Homestay</SidebarGroupLabel>
+					<SidebarGroupLabel className='text-base'>Manager Homestay</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							{items.map((item) => {
 								const isActive =
-									pathname === item.url || (item.url !== '/admin' && pathname?.startsWith(item.url));
+									pathname === item.url ||
+									(item.url !== '/manager' && pathname?.startsWith(item.url));
 
 								return (
 									<SidebarMenuItem key={item.title}>

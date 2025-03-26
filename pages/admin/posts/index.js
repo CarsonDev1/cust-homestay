@@ -1,29 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/components/ui/button';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { getAllPost } from 'pages/api/posts/getPosts';
 import Link from 'next/link';
-import { deletePost } from 'pages/api/posts/deletePost';
+import { approvePost } from 'pages/api/posts/approvePost';
+import { rejectPost } from 'pages/api/posts/rejectPost';
 import Swal from 'sweetalert2';
-import { Pencil, Trash2, PlusCircle, Calendar, MapPin, FileText } from 'lucide-react';
-import AdminLayout from '../layout';
-import { getPostsByUser } from 'pages/api/posts/getPostsByUser';
+import { CheckCircle, XCircle, PlusCircle, Calendar, MapPin, FileText } from 'lucide-react';
+import ManagerLayout from '../layout';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/components/ui/dialog';
+import { Textarea } from '@/components/components/ui/textarea';
 
 const Post = () => {
 	const queryClient = useQueryClient();
+	const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+	const [selectedPostId, setSelectedPostId] = useState(null);
+	const [rejectReason, setRejectReason] = useState('');
 
 	const { data, isLoading, error, refetch } = useQuery({
-		queryKey: ['userPosts'],
-		queryFn: getPostsByUser,
+		queryKey: ['posts'],
+		queryFn: getAllPost,
 	});
 
-	const deleteMutation = useMutation({
-		mutationFn: deletePost,
+	// Mutation for approving a post
+	const approveMutation = useMutation({
+		mutationFn: approvePost,
 		onSuccess: () => {
-			queryClient.invalidateQueries(['userPosts']);
+			queryClient.invalidateQueries(['posts']);
 			Swal.fire({
 				icon: 'success',
-				title: 'Deleted!',
-				text: 'The post has been deleted.',
+				title: 'Approved!',
+				text: 'The post has been approved successfully.',
 				timer: 1500,
 				showConfirmButton: false,
 			});
@@ -32,24 +39,70 @@ const Post = () => {
 			Swal.fire({
 				icon: 'error',
 				title: 'Error',
-				text: 'Failed to delete post. Please try again.',
+				text: 'Failed to approve post. Please try again.',
 			});
 		},
 	});
 
-	const handleDelete = (postID) => {
+	// Mutation for rejecting a post
+	const rejectMutation = useMutation({
+		mutationFn: ({ postID, reasonReject }) => rejectPost(postID, reasonReject),
+		onSuccess: () => {
+			queryClient.invalidateQueries(['posts']);
+			setRejectDialogOpen(false);
+			setRejectReason('');
+			Swal.fire({
+				icon: 'success',
+				title: 'Rejected!',
+				text: 'The post has been rejected successfully.',
+				timer: 1500,
+				showConfirmButton: false,
+			});
+		},
+		onError: () => {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Failed to reject post. Please try again.',
+			});
+		},
+	});
+
+	const handleApprove = (postID) => {
 		Swal.fire({
-			title: 'Are you sure?',
-			text: "This action can't be undone!",
-			icon: 'warning',
+			title: 'Approve this post?',
+			text: 'This will make the post visible to all users.',
+			icon: 'question',
 			showCancelButton: true,
-			confirmButtonColor: '#d33',
-			cancelButtonColor: '#3085d6',
-			confirmButtonText: 'Yes, delete it!',
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Yes, approve it!',
 		}).then((result) => {
 			if (result.isConfirmed) {
-				deleteMutation.mutate(postID);
+				approveMutation.mutate(postID);
 			}
+		});
+	};
+
+	const openRejectDialog = (postID) => {
+		setSelectedPostId(postID);
+		setRejectReason('');
+		setRejectDialogOpen(true);
+	};
+
+	const handleRejectPost = () => {
+		if (!rejectReason.trim()) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Please provide a reason for rejection.',
+			});
+			return;
+		}
+
+		rejectMutation.mutate({
+			postID: selectedPostId,
+			reasonReject: rejectReason,
 		});
 	};
 
@@ -60,10 +113,10 @@ const Post = () => {
 	};
 
 	return (
-		<AdminLayout>
-			<div className='p-6'>
+		<ManagerLayout>
+			<div>
 				<div className='flex items-center justify-between mb-6'>
-					<h1 className='text-2xl font-bold text-gray-800'>My Posts</h1>
+					<h1 className='text-2xl font-bold text-gray-800'>Post Management</h1>
 					<div className='flex gap-2'>
 						<Button
 							onClick={() => refetch()}
@@ -102,21 +155,21 @@ const Post = () => {
 						<div className='flex'>
 							<div className='ml-3'>
 								<p className='text-sm text-red-700'>
-									Error loading your posts: {error?.message || 'Unknown error'}
+									Error loading posts: {error?.message || 'Unknown error'}
 								</p>
 							</div>
 						</div>
 					</div>
 				) : (
 					<>
-						{!data || data.length === 0 ? (
+						{data && data.length === 0 ? (
 							<div className='p-8 text-center bg-white rounded-lg shadow'>
 								<div className='inline-block p-4 mb-4 bg-gray-100 rounded-full'>
 									<FileText size={32} className='text-gray-400' />
 								</div>
 								<h3 className='mb-2 text-lg font-medium text-gray-800'>No Posts Found</h3>
-								<p className='mb-4 text-gray-500'>You haven't created any posts yet.</p>
-								<Link href='/admin/posts/create'>
+								<p className='mb-4 text-gray-500'>There are no posts available at the moment.</p>
+								<Link href='/manager/posts/create'>
 									<Button>
 										<PlusCircle size={16} className='mr-2' />
 										Create First Post
@@ -124,7 +177,7 @@ const Post = () => {
 								</Link>
 							</div>
 						) : (
-							<div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+							<div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
 								{data?.map((post) => (
 									<div
 										key={post.id}
@@ -149,8 +202,20 @@ const Post = () => {
 												<h2 className='text-lg font-semibold text-gray-800 line-clamp-1'>
 													{post.title}
 												</h2>
-												<span className='px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full'>
-													Post
+												<span
+													className={`px-2 py-1 text-xs font-medium rounded-full ${
+														post.status === 'Publish'
+															? 'bg-green-100 text-green-800'
+															: post.status === 'Rejected'
+															? 'bg-red-100 text-red-800'
+															: 'bg-yellow-100 text-yellow-800'
+													}`}
+												>
+													{post.status === 'Publish'
+														? 'Published'
+														: post.status === 'Rejected'
+														? 'Rejected'
+														: 'Pending'}
 												</span>
 											</div>
 
@@ -171,23 +236,58 @@ const Post = () => {
 											</p>
 
 											<div className='flex items-center gap-2 pt-2 border-t border-gray-100'>
-												<Link href={`/admin/posts/edit/${post.id}`} className='flex-1'>
+												{post.status !== 'Publish' && post.status !== 'Rejected' ? (
+													<>
+														<Button
+															variant='outline'
+															onClick={() => handleApprove(post.id)}
+															className='flex-1 text-green-600 border-green-500 hover:bg-green-50'
+															disabled={
+																approveMutation.isPending &&
+																approveMutation.variables === post.id
+															}
+														>
+															<CheckCircle size={16} className='mr-2' />
+															{approveMutation.isPending &&
+															approveMutation.variables === post.id
+																? 'Approving...'
+																: 'Approve'}
+														</Button>
+														<Button
+															variant='outline'
+															onClick={() => openRejectDialog(post.id)}
+															className='flex-1 text-red-600 border-red-500 hover:bg-red-50'
+															disabled={
+																rejectMutation.isPending &&
+																rejectMutation.variables?.postID === post.id
+															}
+														>
+															<XCircle size={16} className='mr-2' />
+															{rejectMutation.isPending &&
+															rejectMutation.variables?.postID === post.id
+																? 'Rejecting...'
+																: 'Reject'}
+														</Button>
+													</>
+												) : post.status === 'Publish' ? (
 													<Button
 														variant='outline'
-														className='w-full text-green-600 border-green-500 hover:bg-green-50'
+														disabled
+														className='w-full text-green-600 border-green-500 cursor-not-allowed bg-green-50 opacity-60'
 													>
-														<Pencil size={16} className='mr-2' />
-														Edit
+														<CheckCircle size={16} className='mr-2' />
+														Published
 													</Button>
-												</Link>
-												<Button
-													variant='destructive'
-													onClick={() => handleDelete(post.id)}
-													className='flex-1'
-												>
-													<Trash2 size={16} className='mr-2' />
-													Delete
-												</Button>
+												) : (
+													<Button
+														variant='outline'
+														disabled
+														className='w-full text-red-600 border-red-500 cursor-not-allowed bg-red-50 opacity-60'
+													>
+														<XCircle size={16} className='mr-2' />
+														Rejected
+													</Button>
+												)}
 											</div>
 										</div>
 									</div>
@@ -197,7 +297,48 @@ const Post = () => {
 					</>
 				)}
 			</div>
-		</AdminLayout>
+
+			{/* Reject Post Dialog */}
+			<Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+				<DialogContent className='sm:max-w-md'>
+					<DialogHeader>
+						<DialogTitle className='flex items-center text-red-600'>
+							<XCircle className='mr-2' size={18} />
+							Reject Post
+						</DialogTitle>
+					</DialogHeader>
+					<div className='py-4'>
+						<p className='mb-4'>
+							Please provide a reason for rejecting this post. This will be visible to the post author.
+						</p>
+						<Textarea
+							placeholder='Enter rejection reason...'
+							value={rejectReason}
+							onChange={(e) => setRejectReason(e.target.value)}
+							className='min-h-[100px]'
+						/>
+					</div>
+					<DialogFooter>
+						<Button
+							type='button'
+							variant='outline'
+							onClick={() => setRejectDialogOpen(false)}
+							disabled={rejectMutation.isPending}
+						>
+							Cancel
+						</Button>
+						<Button
+							type='button'
+							variant='destructive'
+							onClick={handleRejectPost}
+							disabled={rejectMutation.isPending}
+						>
+							{rejectMutation.isPending ? 'Rejecting...' : 'Reject Post'}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+		</ManagerLayout>
 	);
 };
 

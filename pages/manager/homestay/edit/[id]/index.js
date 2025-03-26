@@ -1,7 +1,7 @@
 'use client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
-import AdminLayout from 'pages/admin/layout';
+import AdminLayout from 'pages/manager/layout';
 import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import { Button } from '@/components/components/ui/button';
 import { Input } from '@/components/components/ui/input';

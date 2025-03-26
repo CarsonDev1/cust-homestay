@@ -4,7 +4,7 @@ import { Input } from '@/components/components/ui/input';
 import { Label } from '@/components/components/ui/label';
 import { Textarea } from '@/components/components/ui/textarea';
 import { ImagePlus, X } from 'lucide-react';
-import ManagerLayout from 'pages/manager/layout';
+import ManagerLayout from 'pages/admin/layout';
 import React, { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
@@ -15,7 +15,7 @@ import { createHomeStay } from 'pages/api/homestay/createHomeStay';
 import { uploadImage } from 'pages/api/image/uploadImage';
 import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 import { getAllFacility } from 'pages/api/facility/getFacility';
-import AdminLayout from 'pages/admin/layout';
+import AdminLayout from 'pages/manager/layout';
 
 const MAX_IMAGES = 8;
 

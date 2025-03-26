@@ -6,13 +6,13 @@ import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 import { Label } from '@/components/components/ui/label';
 import { ImagePlus, X } from 'lucide-react';
 import { toast } from 'sonner';
-import ManagerLayout from 'pages/manager/layout';
+import ManagerLayout from 'pages/admin/layout';
 import { Textarea } from '@/components/components/ui/textarea';
 import api from 'utils/api';
 import { useParams } from 'next/navigation';
 import { editPost } from 'pages/api/posts/updatePost';
 import { getPostDetail } from 'pages/api/posts/getPostDetail';
-import AdminLayout from 'pages/admin/layout';
+import AdminLayout from 'pages/manager/layout';
 
 const MAX_IMAGES = 8;
 

@@ -2,14 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import { getPostDetail } from 'pages/api/posts/getPostDetail';
 import { getUserById } from 'pages/api/user/getUserById';
-import ManagerLayout from 'pages/manager/layout';
+import ManagerLayout from 'pages/admin/layout';
 import React from 'react';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import { Button } from '@/components/components/ui/button';
 import { Calendar, MapPin, ArrowLeft, User, Clock } from 'lucide-react';
 import Link from 'next/link';
-import AdminLayout from 'pages/admin/layout';
+import AdminLayout from 'pages/manager/layout';
 
 const PostDetail = () => {
 	const { id } = useParams() ?? {};

@@ -19,7 +19,6 @@ export default function Home() {
 
 	const hasPaymentParams = !!(code || id || cancel || status || orderCode);
 
-	// Handle redirect based on status directly when router is ready
 	useEffect(() => {
 		if (router.isReady && hasPaymentParams) {
 			if (status === 'CANCELLED') {
