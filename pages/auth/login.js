@@ -10,12 +10,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
-import { toast } from 'react-toastify';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/dialog';
 import { useAuth } from 'context/AuthProvider';
+import { toast } from 'sonner';
 
 export default function LoginForm() {
 	const [loading, setLoading] = useState(false);
+	const [forgotLoading, setForgotLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
 	const [showForgotDialog, setShowForgotDialog] = useState(false);
 	const router = useRouter();
@@ -69,7 +70,8 @@ export default function LoginForm() {
 		}
 	};
 
-	const handleForgotPassword = async (data) => {
+	const onForgotSubmit = async (data) => {
+		setForgotLoading(true);
 		try {
 			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/forgot-password', {
 				method: 'PUT',
@@ -85,6 +87,8 @@ export default function LoginForm() {
 			}
 		} catch (error) {
 			toast.error('An error occurred. Please try again.');
+		} finally {
+			setForgotLoading(false);
 		}
 	};
 
@@ -143,26 +147,33 @@ export default function LoginForm() {
 						<div className='mt-4 text-center'>
 							<Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
 								<DialogTrigger asChild>
-									<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
+									<button type='button' className='text-sm text-blue-500 hover:underline'>
+										Forgot Password?
+									</button>
 								</DialogTrigger>
 								<DialogContent>
 									<DialogHeader>
 										<DialogTitle>Forgot Password</DialogTitle>
 									</DialogHeader>
-									<form
-										onSubmit={handleForgotSubmit(handleForgotPassword)}
-										className='flex flex-col gap-3'
-									>
-										<Label>Email</Label>
+									{/* Completely separate form for forgot password */}
+									<div className='flex flex-col gap-3'>
+										<Label htmlFor='forgot-email'>Email</Label>
 										<Input
+											id='forgot-email'
 											{...registerForgot('email', { required: 'Email is required' })}
 											placeholder='Enter your email'
 										/>
 										{forgotErrors.email && (
 											<p className='text-sm text-red-500'>{forgotErrors.email.message}</p>
 										)}
-										<Button type='submit'>Submit</Button>
-									</form>
+										<Button
+											type='button'
+											disabled={forgotLoading}
+											onClick={handleForgotSubmit(onForgotSubmit)}
+										>
+											{forgotLoading ? 'Submitting...' : 'Submit'}
+										</Button>
+									</div>
 								</DialogContent>
 							</Dialog>
 						</div>

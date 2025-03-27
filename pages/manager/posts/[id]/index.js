@@ -173,7 +173,7 @@ const PostDetail = () => {
 						{/* Actions */}
 						<div className='flex justify-end p-6 border-t border-gray-100'>
 							<div className='flex gap-3'>
-								<Link href={`/admin/posts/edit/${id}`}>
+								<Link href={`/manager/posts/edit/${id}`}>
 									<Button
 										variant='outline'
 										className='text-blue-600 border-blue-500 hover:bg-blue-50'
@@ -181,7 +181,7 @@ const PostDetail = () => {
 										Edit Post
 									</Button>
 								</Link>
-								<Link href='/admin/posts'>
+								<Link href='/manager/posts'>
 									<Button>Back to All Posts</Button>
 								</Link>
 							</div>

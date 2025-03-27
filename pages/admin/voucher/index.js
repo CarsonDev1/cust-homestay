@@ -268,7 +268,7 @@ const VoucherList = () => {
 
 	return (
 		<ManagerLayout>
-			<div className='flex justify-between items-center mb-6'>
+			<div className='flex items-center justify-between mb-6'>
 				<h1 className='text-2xl font-bold'>Voucher List</h1>
 				<Button onClick={openCreateDialog}>Add New Voucher</Button>
 			</div>
@@ -290,7 +290,7 @@ const VoucherList = () => {
 										<img
 											src={preview}
 											alt='Preview'
-											className='w-40 h-40 object-cover rounded border'
+											className='object-cover w-40 h-40 border rounded'
 										/>
 									</div>
 								)}
@@ -307,7 +307,7 @@ const VoucherList = () => {
 							</div>
 						</div>
 						{/* Other form fields remain the same */}
-						<div className='grid gap-2'>
+						{/* <div className='grid gap-2'>
 							<Label htmlFor='code'>Voucher Code</Label>
 							<Input
 								id='code'
@@ -317,7 +317,7 @@ const VoucherList = () => {
 								required
 								disabled={editMode}
 							/>
-						</div>
+						</div> */}
 						<div className='grid gap-2'>
 							<Label htmlFor='discount'>Discount (%)</Label>
 							<Input
@@ -444,7 +444,7 @@ const VoucherList = () => {
 									</div>
 
 									{/* Simple pagination controls */}
-									<div className='flex justify-between items-center mt-4'>
+									<div className='flex items-center justify-between mt-4'>
 										<Button
 											variant='outline'
 											size='sm'
@@ -493,7 +493,7 @@ const VoucherList = () => {
 			createVoucherMutation.isPending ||
 			updateVoucherMutation.isPending ||
 			receiveVoucherMutation.isPending ? (
-				<div className='fixed top-0 left-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
+				<div className='fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-white bg-opacity-50'>
 					<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
 				</div>
 			) : error ? (
@@ -515,7 +515,7 @@ const VoucherList = () => {
 						{data?.map((voucher) => (
 							<TableRow key={voucher.voucherID}>
 								<TableCell>
-									<img src={voucher.image} alt='Voucher' className='w-16 h-16 object-cover rounded' />
+									<img src={voucher.image} alt='Voucher' className='object-cover w-16 h-16 rounded' />
 								</TableCell>
 								<TableCell className='font-medium'>{voucher.code}</TableCell>
 								<TableCell>{voucher.description}</TableCell>
@@ -523,7 +523,7 @@ const VoucherList = () => {
 								<TableCell>{new Date(voucher.startDate).toLocaleDateString('vi')}</TableCell>
 								<TableCell>{new Date(voucher.endDate).toLocaleDateString('vi')}</TableCell>
 								<TableCell>
-									<div className='flex gap-2 flex-wrap'>
+									<div className='flex flex-wrap gap-2'>
 										<Button onClick={() => handleEdit(voucher)}>Edit</Button>
 										<Button variant='outline' onClick={() => handleReceive(voucher.voucherID)}>
 											Assign

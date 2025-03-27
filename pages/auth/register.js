@@ -37,7 +37,7 @@ export default function RegisterForm() {
 				},
 				body: JSON.stringify({
 					...data,
-					roleId: isManager ? 2 : 1,
+					roleId: isManager ? 2 : 3,
 				}),
 			});
 
@@ -63,7 +63,7 @@ export default function RegisterForm() {
 
 	return (
 		<div>
-			<div className='relative flex items-center justify-center p-4 h-screen bg-gray-100'>
+			<div className='relative flex items-center justify-center h-screen p-4 bg-gray-100'>
 				<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
 				<Card className='relative z-50 w-full max-w-xl bg-white/80'>
 					<CardHeader>

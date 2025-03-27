@@ -5,7 +5,6 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/components/ui/select';
 import { useQuery } from '@tanstack/react-query';
-import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import dynamic from 'next/dynamic';
 import { Input } from '@/components/components/ui/input';
 import { Checkbox } from '@/components/components/ui/checkbox';
@@ -14,6 +13,7 @@ import { Label } from '@/components/components/ui/label';
 import { Badge } from '@/components/components/ui/badge';
 import { getAllAmenity } from 'pages/api/amenity/getAmenity';
 import { getHomeStayRevenueStatistics } from 'pages/api/booking/getHomeStayRevenueStatistics ';
+import { getHomeStayByUser } from 'pages/api/booking/bookingByUser';
 
 const DynamicChart = dynamic(() => import('react-chartjs-2').then((mod) => mod.Bar), { ssr: false });
 
@@ -57,10 +57,11 @@ const Admin = () => {
 		data: DataHomeStay,
 		isLoading: loadingHomeStay,
 		refetch: refetchHomeStays,
+		error: homeStayError,
 	} = useQuery({
-		queryKey: ['homeStays', filters],
-		queryFn: () => getAllHomeStay(filters),
-		enabled: mounted && isAuthenticated,
+		queryKey: ['homeStaysByUser', dataProfile?.id],
+		queryFn: () => getHomeStayByUser(dataProfile?.id),
+		enabled: mounted && isAuthenticated && !!dataProfile?.id,
 	});
 
 	useEffect(() => {

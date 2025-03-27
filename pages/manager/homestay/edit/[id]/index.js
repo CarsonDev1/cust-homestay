@@ -121,22 +121,22 @@ const UpdateHomeStay = () => {
 
 	if (isLoading) {
 		return (
-			<div className='fixed top-0 left-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
+			<div className='fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-white bg-opacity-50'>
 				<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
 			</div>
 		);
 	}
 
 	if (error) {
-		return <p className='text-center text-red-500 py-8'>Error fetching details</p>;
+		return <p className='py-8 text-center text-red-500'>Error fetching details</p>;
 	}
 
 	console.log('formData', formData);
 
 	return (
 		<AdminLayout>
-			<div className='p-4 sm:p-6 lg:p-8 bg-white rounded-2xl shadow-lg space-y-6'>
-				<h2 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center'>Edit Homestay</h2>
+			<div className='p-4 space-y-6 bg-white shadow-lg sm:p-6 lg:p-8 rounded-2xl'>
+				<h2 className='mb-6 text-2xl font-bold text-center text-gray-800 sm:text-3xl'>Edit Homestay</h2>
 
 				<div className='grid grid-cols-2 gap-4'>
 					<div>
@@ -147,7 +147,7 @@ const UpdateHomeStay = () => {
 									<img
 										src={formData.mainImage}
 										alt='Main Homestay'
-										className='w-full object-cover h-64 rounded-md cursor-pointer hover:opacity-90 transition'
+										className='object-cover w-full h-64 transition rounded-md cursor-pointer hover:opacity-90'
 									/>
 								</PhotoView>
 							</PhotoProvider>
@@ -233,14 +233,14 @@ const UpdateHomeStay = () => {
 
 				<div>
 					<Label>Additional Images</Label>
-					<div className='grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-4 mb-4'>
+					<div className='grid grid-cols-4 gap-4 mb-4 sm:grid-cols-6 lg:grid-cols-8'>
 						{formData.homeStayImage.map((img, index) => (
 							<PhotoProvider key={index}>
 								<PhotoView src={img.image}>
 									<img
 										src={img.image}
 										alt={`Image ${index + 1}`}
-										className='rounded-lg w-full object-cover cursor-pointer hover:opacity-90 transition'
+										className='object-cover w-full transition rounded-lg cursor-pointer hover:opacity-90'
 									/>
 								</PhotoView>
 							</PhotoProvider>

@@ -84,7 +84,7 @@ const Post = () => {
 							</svg>
 							Refresh
 						</Button>
-						<Link href='/admin/posts/create'>
+						<Link href='/manager/posts/create'>
 							<Button className='flex items-center'>
 								<PlusCircle size={16} className='mr-2' />
 								Create Post
@@ -137,7 +137,7 @@ const Post = () => {
 												className='object-cover w-full h-full'
 											/>
 											<div className='absolute inset-0 flex items-center justify-center transition-opacity bg-black opacity-0 hover:opacity-100 bg-opacity-40'>
-												<Link href={`/admin/posts/${post.id}`}>
+												<Link href={`/manager/posts/${post.id}`}>
 													<Button className='text-gray-800 bg-white hover:bg-gray-100'>
 														View Details
 													</Button>
@@ -149,8 +149,20 @@ const Post = () => {
 												<h2 className='text-lg font-semibold text-gray-800 line-clamp-1'>
 													{post.title}
 												</h2>
-												<span className='px-2 py-1 text-xs font-medium text-blue-800 bg-blue-100 rounded-full'>
-													Post
+												<span
+													className={`px-2 py-1 text-xs font-medium rounded-full ${
+														post.status === 'Publish'
+															? 'bg-green-100 text-green-800'
+															: post.status === 'Rejected'
+															? 'bg-red-100 text-red-800'
+															: 'bg-yellow-100 text-yellow-800'
+													}`}
+												>
+													{post.status === 'Publish'
+														? 'Published'
+														: post.status === 'Rejected'
+														? 'Rejected'
+														: 'Pending'}
 												</span>
 											</div>
 
@@ -171,7 +183,7 @@ const Post = () => {
 											</p>
 
 											<div className='flex items-center gap-2 pt-2 border-t border-gray-100'>
-												<Link href={`/admin/posts/edit/${post.id}`} className='flex-1'>
+												<Link href={`/manager/posts/edit/${post.id}`} className='flex-1'>
 													<Button
 														variant='outline'
 														className='w-full text-green-600 border-green-500 hover:bg-green-50'
