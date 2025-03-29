@@ -102,6 +102,7 @@ const Homestay = () => {
 		});
 	};
 
+	// Update the handleEditTTLockSubmit function
 	const handleEditTTLockSubmit = () => {
 		const { homeStayID, ttLockUserName, password } = editTTLockDialog;
 
@@ -114,17 +115,16 @@ const Homestay = () => {
 			return;
 		}
 
-		console.log('Data to be sent:', {
-			TTLockUserName: ttLockUserName,
-			Password: password,
-			HomeStayID: homeStayID,
-		});
+		// Make sure all values are strings to avoid [object Object] in the payload
+		const payload = {
+			TTLockUserName: String(ttLockUserName),
+			Password: password ? String(password) : '',
+			HomeStayID: String(homeStayID),
+		};
 
-		editTTLockMutation.mutate({
-			TTLockUserName: ttLockUserName || '',
-			Password: password || '',
-			HomeStayID: homeStayID || '',
-		});
+		console.log('Data to be sent:', payload);
+
+		editTTLockMutation.mutate(payload);
 	};
 
 	const [userLocksDialog, setUserLocksDialog] = useState({

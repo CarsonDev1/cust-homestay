@@ -1,12 +1,23 @@
+// In pages/api/ttlock/editTTLockAccount.js
 import api from 'utils/api';
 
-export const editTTLockAccount = async (TTLockUserName, Password, HomeStayID) => {
+export const editTTLockAccount = async (data) => {
 	try {
+		// Create a new FormData object
 		const formData = new FormData();
-		formData.append('TTLockUserName', TTLockUserName);
-		formData.append('Password', Password);
-		formData.append('HomeStayID', HomeStayID);
 
+		// Ensure values are strings and append to FormData
+		formData.append('TTLockUserName', String(data.TTLockUserName || ''));
+		formData.append('Password', String(data.Password || ''));
+		formData.append('HomeStayID', String(data.HomeStayID || ''));
+
+		console.log('Sending FormData to API:', {
+			TTLockUserName: String(data.TTLockUserName || ''),
+			Password: String(data.Password || ''),
+			HomeStayID: String(data.HomeStayID || ''),
+		});
+
+		// Use API with form-data headers
 		const response = await api.put('/ttlock/edit-ttlock-account', formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data',
@@ -15,6 +26,7 @@ export const editTTLockAccount = async (TTLockUserName, Password, HomeStayID) =>
 
 		return response.data;
 	} catch (error) {
+		console.error('Error in editTTLockAccount:', error);
 		throw new Error('Failed to edit TTLock account');
 	}
 };
