@@ -7,8 +7,11 @@ import { Button } from './components/ui/button';
 import { Badge } from './components/ui/badge';
 import { Star, MapPin, ArrowRight } from 'lucide-react';
 import { Skeleton } from './components/ui/skeleton';
+import { useTranslation } from 'next-i18next';
 
 const MediumCards = () => {
+	const { t } = useTranslation('common');
+
 	const [filters, setFilters] = useState({
 		amenityNames: [],
 		priceRange: [0, 1000],
@@ -32,11 +35,9 @@ const MediumCards = () => {
 			<div className='container-lg'>
 				<div className='mb-10 text-center md:text-left'>
 					<h2 className='mb-3 text-3xl font-bold'>
-						Top-Rated <span className='text-blue-600'>HomeStays</span>
+						{t('top-rated')} <span className='text-blue-600'>HomeStays</span>
 					</h2>
-					<p className='max-w-2xl text-gray-600'>
-						Discover our highest-rated accommodations with exceptional amenities and stunning locations.
-					</p>
+					<p className='w-full text-gray-600'>{t('discover')}</p>
 				</div>
 
 				{isLoading ? (
@@ -132,7 +133,7 @@ const MediumCards = () => {
 												className='justify-center w-full mt-auto transition-all duration-300 bg-blue-600 hover:bg-blue-700'
 											>
 												<Link href={`/home-stay/${item.id}`}>
-													Book Now
+													{t('booknow')}
 													<ArrowRight className='w-4 h-4 ml-2' />
 												</Link>
 											</Button>
@@ -150,7 +151,7 @@ const MediumCards = () => {
 				<div className='mt-10 text-center'>
 					<Button asChild variant='outline' className='text-blue-600 border-blue-200 hover:bg-blue-50'>
 						<Link href='/home-stay'>
-							View All HomeStays
+							{t('viewall')}
 							<ArrowRight className='w-4 h-4 ml-2' />
 						</Link>
 					</Button>

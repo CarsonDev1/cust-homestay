@@ -23,6 +23,7 @@ import {
 	Loader,
 	FilterX,
 	Eye,
+	Lock,
 } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Link from 'next/link';
@@ -47,9 +48,89 @@ import { addHomeStayAmenity } from 'pages/api/homestay/createHomeStayAmenity';
 import { deleteHomeStayAmenity } from 'pages/api/homestay/deleteHomeStayAmenity';
 import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import { Badge } from '@/components/components/ui/badge';
+import { getHomeStayByUser } from 'pages/api/booking/bookingByUser';
+import { useAuth } from 'context/AuthProvider';
+import { addTTLockAccount } from 'pages/api/ttlock/addTTLockAccount';
+import { getTTLockUserLocks } from 'pages/api/ttlock/getTTLockUserLocks';
+import TTLockUserLocksDialog from '@/components/TTLockUserLocksDialog';
+import { editTTLockAccount } from 'pages/api/ttlock/editTTLockAccount';
 
 const Homestay = () => {
 	const queryClient = useQueryClient();
+	const { dataProfile } = useAuth();
+	const [selectedHomeStayID, setSelectedHomeStayID] = useState(null);
+	const [editTTLockDialog, setEditTTLockDialog] = useState({
+		isOpen: false,
+		homeStayID: null,
+		ttLockUserName: '',
+		password: '',
+	});
+
+	const editTTLockMutation = useMutation({
+		mutationFn: editTTLockAccount,
+		onSuccess: () => {
+			queryClient.invalidateQueries(['homeStays']);
+			Swal.fire({
+				icon: 'success',
+				title: 'Success!',
+				text: 'TTLock account updated successfully.',
+				timer: 1500,
+				showConfirmButton: false,
+			});
+			setEditTTLockDialog({
+				isOpen: false,
+				homeStayID: null,
+				ttLockUserName: '',
+				password: '',
+			});
+		},
+		onError: (error) => {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: `Failed to update TTLock account: ${error.message || 'Please try again.'}`,
+			});
+		},
+	});
+
+	const openEditTTLockDialog = (homeStay) => {
+		setEditTTLockDialog({
+			isOpen: true,
+			homeStayID: homeStay.id,
+			ttLockUserName: typeof homeStay.tTlockAccuont?.userName === 'string' ? homeStay.tTlockAccuont.userName : '',
+			password: '',
+		});
+	};
+
+	const handleEditTTLockSubmit = () => {
+		const { homeStayID, ttLockUserName, password } = editTTLockDialog;
+
+		if (!ttLockUserName) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Username is required.',
+			});
+			return;
+		}
+
+		console.log('Data to be sent:', {
+			TTLockUserName: ttLockUserName,
+			Password: password,
+			HomeStayID: homeStayID,
+		});
+
+		editTTLockMutation.mutate({
+			TTLockUserName: ttLockUserName || '',
+			Password: password || '',
+			HomeStayID: homeStayID || '',
+		});
+	};
+
+	const [userLocksDialog, setUserLocksDialog] = useState({
+		isOpen: false,
+		locks: [],
+	});
 
 	const [filters, setFilters] = useState({
 		amenityNames: [],
@@ -106,9 +187,15 @@ const Homestay = () => {
 		queryFn: getAllAmenity,
 	});
 
-	const { data, isLoading, error } = useQuery({
-		queryKey: ['homeStays', filters],
-		queryFn: () => getAllHomeStay(filters),
+	const {
+		data,
+		isLoading,
+		refetch: refetchHomeStays,
+		error,
+	} = useQuery({
+		queryKey: ['homeStaysByUser', dataProfile?.id],
+		queryFn: () => getHomeStayByUser(dataProfile?.id),
+		enabled: !!dataProfile?.id,
 	});
 
 	// Update active filters count
@@ -452,6 +539,85 @@ const Homestay = () => {
 		return <Star className='w-4 h-4' />;
 	};
 
+	const [ttLockDialog, setTTLockDialog] = useState({
+		isOpen: false,
+		homeStayID: null,
+		ttLockUserName: '',
+		password: '',
+	});
+
+	const ttLockMutation = useMutation({
+		mutationFn: addTTLockAccount,
+		onSuccess: () => {
+			queryClient.invalidateQueries(['homeStays']);
+			Swal.fire({
+				icon: 'success',
+				title: 'Success!',
+				text: 'TTLock account added successfully.',
+				timer: 1500,
+				showConfirmButton: false,
+			});
+			setTTLockDialog({
+				isOpen: false,
+				homeStayID: null,
+				ttLockUserName: '',
+				password: '',
+			});
+		},
+		onError: (error) => {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: `Failed to add TTLock account: ${error.message || 'Please try again.'}`,
+			});
+		},
+	});
+
+	const openTTLockDialog = (homeStayID) => {
+		setTTLockDialog({
+			isOpen: true,
+			homeStayID,
+			ttLockUserName: '',
+			password: '',
+		});
+	};
+
+	const handleTTLockSubmit = () => {
+		const { homeStayID, ttLockUserName, password } = ttLockDialog;
+
+		if (!ttLockUserName || !password) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: 'Please fill in all fields.',
+			});
+			return;
+		}
+
+		ttLockMutation.mutate({
+			ttLockUserName,
+			password,
+			homeStayID,
+		});
+	};
+
+	const ttLockUserLocksQuery = useMutation({
+		mutationFn: (homeStayID) => getTTLockUserLocks(homeStayID),
+		onSuccess: (data) => {
+			setUserLocksDialog({
+				isOpen: true,
+				locks: data.data,
+			});
+		},
+		onError: (error) => {
+			Swal.fire({
+				icon: 'error',
+				title: 'Error',
+				text: `Failed to fetch TTLock user locks: ${error.message}`,
+			});
+		},
+	});
+
 	return (
 		<AdminLayout>
 			<div className='flex items-center justify-between mb-4'>
@@ -643,160 +809,341 @@ const Homestay = () => {
 						const priceForToday = getPriceForToday(homeStay.calendar);
 
 						return (
-							<div
-								key={homeStay.id}
-								className='group relative h-[420px] rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300'
-							>
-								{/* Card Front */}
-								<div className='absolute inset-0 z-10 w-full h-full overflow-hidden transition-all duration-500 ease-in-out transform rounded-xl group-hover:opacity-0 group-hover:scale-95'>
-									{/* Main Image */}
-									<div className='relative w-full h-full'>
-										<img
-											src={homeStay?.mainImage}
-											alt={homeStay.name}
-											className='object-cover w-full h-full rounded-xl'
-										/>
+							<>
+								<div
+									key={homeStay.id}
+									className='group relative h-[420px] rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300'
+								>
+									{/* Card Front */}
+									<div className='absolute inset-0 z-10 w-full h-full overflow-hidden transition-all duration-500 ease-in-out transform rounded-xl group-hover:opacity-0 group-hover:scale-95'>
+										{/* Main Image */}
+										<div className='relative w-full h-full'>
+											<img
+												src={homeStay?.mainImage}
+												alt={homeStay.name}
+												className='object-cover w-full h-full rounded-xl'
+											/>
 
-										{/* Overlay Gradient */}
-										<div className='absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-xl'></div>
+											{/* Overlay Gradient */}
+											<div className='absolute inset-0 bg-gradient-to-t from-black/70 to-transparent rounded-xl'></div>
 
-										{/* Status Tags */}
-										<div className='absolute top-0 left-0 right-0 flex items-start justify-between p-4'>
-											{homeStay?.isDeleted === true && (
-												<span className='px-3 py-1 text-xs font-bold tracking-wider text-white uppercase bg-red-500 rounded-full shadow-lg'>
-													Deleted
-												</span>
-											)}
-											<div className='ml-auto'>
-												<span className='px-3 py-1 text-xs font-bold tracking-wider text-white uppercase rounded-full shadow-lg bg-blue-500/90'>
-													{homeStay?.openIn}
-												</span>
-											</div>
-										</div>
-
-										{/* Content at Bottom */}
-										<div className='absolute bottom-0 left-0 right-0 p-5'>
-											<h2 className='mb-2 text-2xl font-bold text-white'>{homeStay.name}</h2>
-											<div className='flex items-center mb-1'>
-												{[...Array(5)].map((_, index) => (
-													<svg
-														key={index}
-														className={`w-5 h-5 ${
-															homeStay.standar > index
-																? 'text-yellow-400'
-																: 'text-gray-400/50'
-														}`}
-														fill='currentColor'
-														viewBox='0 0 20 20'
-													>
-														<path d='M10 15l-5.09 3.09 1.64-6.88L0 6.91l6.91-.59L10 0l2.09 6.32 6.91.59-4.55 4.3 1.64 6.88L10 15z' />
-													</svg>
-												))}
-												<span className='ml-2 text-sm text-white'>
-													{homeStay.standar} out of 5
-												</span>
-											</div>
-											<p className='text-sm truncate text-white/80'>
-												{homeStay.address}, {homeStay.city}
-											</p>
-										</div>
-									</div>
-								</div>
-
-								{/* Card Back (Details) */}
-								<div className='absolute inset-0 z-20 flex flex-col w-full h-full p-5 transition-all duration-500 ease-in-out transform bg-white opacity-0 rounded-xl group-hover:opacity-100 group-hover:scale-100'>
-									<div className='flex-1'>
-										<h2 className='mb-2 text-xl font-semibold text-gray-800'>{homeStay.name}</h2>
-										<p className='mb-4 text-gray-600'>
-											{homeStay.address}, {homeStay.city}
-										</p>
-
-										<div className='p-3 mb-4 rounded-lg bg-gray-50'>
-											<div className='flex items-center justify-between'>
-												<span className='font-medium text-gray-700'>Today's Rate:</span>
-												{priceForToday !== null ? (
-													<span className='text-xl font-bold text-green-600'>
-														${priceForToday}
-													</span>
-												) : (
-													<span className='px-2 py-1 text-sm text-red-600 bg-red-100 rounded'>
-														Not Available
+											{/* Status Tags */}
+											<div className='absolute top-0 left-0 right-0 flex items-start justify-between p-4'>
+												{homeStay?.isDeleted === true && (
+													<span className='px-3 py-1 text-xs font-bold tracking-wider text-white uppercase bg-red-500 rounded-full shadow-lg'>
+														Deleted
 													</span>
 												)}
+												<div className='ml-auto'>
+													<span className='px-3 py-1 text-xs font-bold tracking-wider text-white uppercase rounded-full shadow-lg bg-blue-500/90'>
+														{homeStay?.openIn}
+													</span>
+												</div>
+											</div>
+
+											{/* Content at Bottom */}
+											<div className='absolute bottom-0 left-0 right-0 p-5'>
+												<h2 className='mb-2 text-2xl font-bold text-white'>{homeStay.name}</h2>
+												<div className='flex items-center mb-1'>
+													{[...Array(5)].map((_, index) => (
+														<svg
+															key={index}
+															className={`w-5 h-5 ${
+																homeStay.standar > index
+																	? 'text-yellow-400'
+																	: 'text-gray-400/50'
+															}`}
+															fill='currentColor'
+															viewBox='0 0 20 20'
+														>
+															<path d='M10 15l-5.09 3.09 1.64-6.88L0 6.91l6.91-.59L10 0l2.09 6.32 6.91.59-4.55 4.3 1.64 6.88L10 15z' />
+														</svg>
+													))}
+													<span className='ml-2 text-sm text-white'>
+														{homeStay.standar} out of 5
+													</span>
+												</div>
+												<p className='text-sm truncate text-white/80'>
+													{homeStay.address}, {homeStay.city}
+												</p>
 											</div>
 										</div>
 									</div>
 
-									{/* Actions Section */}
-									<div className='mt-2 space-y-3'>
-										<Link href={`/manager/homestay/${homeStay.id}`} className='block'>
-											<Button className='w-full font-medium'>
-												<Eye className='w-4 h-4 mr-2' /> View Details
-											</Button>
-										</Link>
+									{/* Card Back (Details) */}
+									<div className='absolute inset-0 z-20 flex flex-col w-full h-full p-5 transition-all duration-500 ease-in-out transform bg-white opacity-0 rounded-xl group-hover:opacity-100 group-hover:scale-100'>
+										<div className='flex-1'>
+											<h2 className='mb-2 text-xl font-semibold text-gray-800'>
+												{homeStay.name}
+											</h2>
+											<p className='mb-4 text-gray-600'>
+												{homeStay.address}, {homeStay.city}
+											</p>
 
-										<div className='grid grid-cols-5 gap-2'>
-											<Link href={`/manager/homestay/edit/${homeStay.id}`} className='col-span-1'>
+											<div className='p-3 mb-4 rounded-lg bg-gray-50'>
+												<div className='flex items-center justify-between'>
+													<span className='font-medium text-gray-700'>Today's Rate:</span>
+													{priceForToday !== null ? (
+														<span className='text-xl font-bold text-green-600'>
+															${priceForToday}
+														</span>
+													) : (
+														<span className='px-2 py-1 text-sm text-red-600 bg-red-100 rounded'>
+															Not Available
+														</span>
+													)}
+												</div>
+											</div>
+										</div>
+
+										{/* Actions Section */}
+										<div className='mt-2 space-y-3'>
+											<Link href={`/manager/homestay/${homeStay.id}`} className='block'>
+												<Button className='w-full font-medium'>
+													<Eye className='w-4 h-4 mr-2' /> View Details
+												</Button>
+											</Link>
+
+											<div className='grid grid-cols-7 gap-2'>
+												<Link
+													href={`/manager/homestay/edit/${homeStay.id}`}
+													className='col-span-1'
+												>
+													<Button
+														className='w-full bg-emerald-500 hover:bg-emerald-600'
+														title='Edit'
+														disabled={homeStay?.isDeleted === true}
+													>
+														<Pencil className='w-4 h-4' />
+													</Button>
+												</Link>
+
 												<Button
-													className='w-full bg-emerald-500 hover:bg-emerald-600'
-													title='Edit'
+													variant='destructive'
+													className='col-span-1'
+													onClick={() => handleDelete(homeStay.id)}
 													disabled={homeStay?.isDeleted === true}
+													title='Delete'
+												>
+													<Trash2 className='w-4 h-4' />
+												</Button>
+
+												<Button
+													variant='outline'
+													className='col-span-1'
+													onClick={() => openManageFacilitiesDialog(homeStay.id)}
+													disabled={homeStay?.isDeleted === true}
+													title='Manage Facilities'
+												>
+													<List className='w-4 h-4' />
+												</Button>
+
+												<Button
+													variant='outline'
+													className='col-span-1'
+													onClick={() => openManageAmenitiesDialog(homeStay.id)}
+													disabled={homeStay?.isDeleted === true}
+													title='Manage Amenities'
+												>
+													<Grid className='w-4 h-4' />
+												</Button>
+
+												<Link
+													href={`/manager/homestay/calendar/${homeStay.id}`}
+													className='col-span-1'
+												>
+													<Button
+														variant='outline'
+														className='w-full'
+														disabled={homeStay?.isDeleted === true}
+														title='Manage Calendar'
+													>
+														<Calendar className='w-4 h-4' />
+													</Button>
+												</Link>
+
+												{homeStay.tTlockAccuont.length > 0 ? (
+													<Button
+														variant='outline'
+														className='col-span-1'
+														onClick={() => {
+															setSelectedHomeStayID(homeStay.id);
+															ttLockUserLocksQuery.mutate(homeStay.id);
+														}}
+														disabled={
+															homeStay?.isDeleted === true ||
+															ttLockUserLocksQuery.isLoading
+														}
+														title='Show TTLock Locks'
+													>
+														<Lock className='w-4 h-4' />
+														{ttLockUserLocksQuery.isLoading && (
+															<Loader className='w-4 h-4 ml-2 animate-spin' />
+														)}
+													</Button>
+												) : (
+													<Button
+														variant='outline'
+														className='col-span-1'
+														onClick={() => openTTLockDialog(homeStay.id)}
+														disabled={homeStay?.isDeleted === true}
+														title='Add TTLock Account'
+													>
+														<Lock className='w-4 h-4' />
+													</Button>
+												)}
+												<Button
+													variant='outline'
+													className='col-span-1'
+													onClick={() => openEditTTLockDialog(homeStay)}
+													disabled={homeStay?.isDeleted === true}
+													title='Edit TTLock Account'
 												>
 													<Pencil className='w-4 h-4' />
 												</Button>
-											</Link>
 
-											<Button
-												variant='destructive'
-												className='col-span-1'
-												onClick={() => handleDelete(homeStay.id)}
-												disabled={homeStay?.isDeleted === true}
-												title='Delete'
-											>
-												<Trash2 className='w-4 h-4' />
-											</Button>
-
-											<Button
-												variant='outline'
-												className='col-span-1'
-												onClick={() => openManageFacilitiesDialog(homeStay.id)}
-												disabled={homeStay?.isDeleted === true}
-												title='Manage Facilities'
-											>
-												<List className='w-4 h-4' />
-											</Button>
-
-											<Button
-												variant='outline'
-												className='col-span-1'
-												onClick={() => openManageAmenitiesDialog(homeStay.id)}
-												disabled={homeStay?.isDeleted === true}
-												title='Manage Amenities'
-											>
-												<Grid className='w-4 h-4' />
-											</Button>
-
-											<Link
-												href={`/manager/homestay/calendar/${homeStay.id}`}
-												className='col-span-1'
-											>
-												<Button
-													variant='outline'
-													className='w-full'
-													disabled={homeStay?.isDeleted === true}
-													title='Manage Calendar'
+												<Dialog
+													open={editTTLockDialog.isOpen}
+													onOpenChange={(open) =>
+														setEditTTLockDialog((prev) => ({ ...prev, isOpen: open }))
+													}
 												>
-													<Calendar className='w-4 h-4' />
-												</Button>
-											</Link>
+													<DialogContent className='sm:max-w-md'>
+														<DialogHeader>
+															<DialogTitle>Edit TTLock Account</DialogTitle>
+															<DialogDescription>
+																Update your TTLock account credentials for this
+																homestay.
+															</DialogDescription>
+														</DialogHeader>
+														<div className='grid gap-4 py-4'>
+															<div className='grid items-center grid-cols-4 gap-4'>
+																<Label
+																	htmlFor='editTTLockUsername'
+																	className='text-right'
+																>
+																	Username
+																</Label>
+																<Input
+																	id='editTTLockUsername'
+																	value={editTTLockDialog.ttLockUserName}
+																	onChange={(e) =>
+																		setEditTTLockDialog((prev) => ({
+																			...prev,
+																			ttLockUserName: e.target.value,
+																		}))
+																	}
+																	className='col-span-3'
+																	placeholder='Enter TTLock username'
+																/>
+															</div>
+															<div className='grid items-center grid-cols-4 gap-4'>
+																<Label
+																	htmlFor='editTTLockPassword'
+																	className='text-right'
+																>
+																	New Password
+																</Label>
+																<Input
+																	id='editTTLockPassword'
+																	type='password'
+																	value={editTTLockDialog.password}
+																	onChange={(e) =>
+																		setEditTTLockDialog((prev) => ({
+																			...prev,
+																			password: e.target.value,
+																		}))
+																	}
+																	className='col-span-3'
+																	placeholder='Enter new password (optional)'
+																/>
+															</div>
+														</div>
+														<DialogFooter>
+															<Button
+																type='submit'
+																onClick={handleEditTTLockSubmit}
+																disabled={editTTLockMutation.isLoading}
+															>
+																{editTTLockMutation.isLoading
+																	? 'Updating...'
+																	: 'Update Account'}
+															</Button>
+														</DialogFooter>
+													</DialogContent>
+												</Dialog>
+
+												<TTLockUserLocksDialog
+													isOpen={userLocksDialog.isOpen}
+													onOpenChange={(open) =>
+														setUserLocksDialog((prev) => ({ ...prev, isOpen: open }))
+													}
+													locks={userLocksDialog.locks}
+													homeStayID={selectedHomeStayID}
+												/>
+											</div>
 										</div>
 									</div>
 								</div>
-							</div>
+							</>
 						);
 					})}
 				</div>
 			)}
+
+			<Dialog
+				open={ttLockDialog.isOpen}
+				onOpenChange={(open) => setTTLockDialog((prev) => ({ ...prev, isOpen: open }))}
+			>
+				<DialogContent className='sm:max-w-md'>
+					<DialogHeader>
+						<DialogTitle>Add TTLock Account</DialogTitle>
+						<DialogDescription>Enter your TTLock account credentials for this homestay.</DialogDescription>
+					</DialogHeader>
+					<div className='grid gap-4 py-4'>
+						<div className='grid items-center grid-cols-4 gap-4'>
+							<Label htmlFor='ttLockUsername' className='text-right'>
+								Username
+							</Label>
+							<Input
+								id='ttLockUsername'
+								value={ttLockDialog.ttLockUserName}
+								onChange={(e) =>
+									setTTLockDialog((prev) => ({
+										...prev,
+										ttLockUserName: e.target.value,
+									}))
+								}
+								className='col-span-3'
+								placeholder='Enter TTLock username'
+							/>
+						</div>
+						<div className='grid items-center grid-cols-4 gap-4'>
+							<Label htmlFor='ttLockPassword' className='text-right'>
+								Password
+							</Label>
+							<Input
+								id='ttLockPassword'
+								type='password'
+								value={ttLockDialog.password}
+								onChange={(e) =>
+									setTTLockDialog((prev) => ({
+										...prev,
+										password: e.target.value,
+									}))
+								}
+								className='col-span-3'
+								placeholder='Enter TTLock password'
+							/>
+						</div>
+					</div>
+					<DialogFooter>
+						<Button type='submit' onClick={handleTTLockSubmit} disabled={ttLockMutation.isLoading}>
+							{ttLockMutation.isLoading ? 'Adding...' : 'Add Account'}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 
 			{/* Dialogs (unchanged) */}
 			{/* Add Facility Dialog */}

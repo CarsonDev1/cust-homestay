@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 import { Button } from './components/ui/button';
 import SearchForm from './SearchForm';
@@ -18,7 +19,6 @@ const Hero = () => {
 				backgroundPosition: 'center 30%',
 			}}
 		>
-			{/* Decorative overlay gradient */}
 			<div className='absolute inset-0 bg-blue-900/20 mix-blend-multiply'></div>
 
 			<div className='container-lg z-10 flex flex-col gap-10 py-16'>
@@ -54,7 +54,7 @@ const Hero = () => {
 								size='lg'
 								className='border-white border text-white hover:bg-white/10 font-medium px-6'
 							>
-								Explore HomeStays
+								{t('hero.cta')}
 								<ChevronRight className='ml-1 h-4 w-4 transition-transform group-hover:translate-x-1' />
 							</Button>
 						</Link>

@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider } from 'context/AuthProvider';
 import Provider from 'utils/Provider';
 import { appWithTranslation } from 'next-i18next';
+import nextI18nextConfig from 'next-i18next.config';
 
 // Cấu hình NProgress
 NProgress.configure({ showSpinner: false });
@@ -65,4 +66,4 @@ function MyApp({ Component, pageProps, session }) {
 	);
 }
 
-export default appWithTranslation(MyApp);
+export default appWithTranslation(MyApp, nextI18nextConfig);

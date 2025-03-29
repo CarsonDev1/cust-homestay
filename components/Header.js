@@ -26,12 +26,7 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
-
-// Define the navigation items with their paths
-const NAV_ITEMS = [
-	{ href: '/home-stay', label: 'Homestay' },
-	{ href: '/posts', label: 'Posts' },
-];
+import { useTranslation } from 'next-i18next';
 
 const Header = () => {
 	const router = useRouter();
@@ -40,6 +35,7 @@ const Header = () => {
 	const [scrolled, setScrolled] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 	const [isSearching, setIsSearching] = useState(false);
+	const { t } = useTranslation('common');
 
 	// Date selection states
 	const [checkInDate, setCheckInDate] = useState(null);
@@ -168,23 +164,36 @@ const Header = () => {
 						</Link>
 
 						{/* Desktop Navigation */}
+
 						<nav className='items-center hidden ml-6 space-x-1 md:flex'>
-							{NAV_ITEMS.map((item) => (
-								<Link
-									key={item.href}
-									href={item.href}
-									className={`
+							<Link
+								key='/home-stay'
+								href='/home-stay'
+								className={`
                     px-3 py-2 rounded-md text-sm font-medium transition-colors
                     ${
-						isActivePath(item.href)
+						isActivePath('/home-stay')
 							? 'text-blue-600 bg-blue-50'
 							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
 					}
                   `}
-								>
-									{item.label}
-								</Link>
-							))}
+							>
+								{t('homestays')}
+							</Link>
+							<Link
+								key='/posts'
+								href='/posts'
+								className={`
+                    px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    ${
+						isActivePath('/posts')
+							? 'text-blue-600 bg-blue-50'
+							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+					}
+                  `}
+							>
+								{t('posts')}
+							</Link>
 						</nav>
 					</div>
 
@@ -193,7 +202,7 @@ const Header = () => {
 						<form onSubmit={handleSearch} className='relative flex items-center w-full gap-2'>
 							<Input
 								type='text'
-								placeholder='Where are you going?'
+								placeholder={t('where')}
 								value={location}
 								onChange={(e) => setLocation(e.target.value)}
 								className='border-gray-200 rounded-l-full rounded-r-none focus:ring-blue-500 focus:border-blue-500'
@@ -213,15 +222,15 @@ const Header = () => {
 												{format(checkInDate, 'MMM d')} - {format(checkOutDate, 'MMM d')}
 											</span>
 										) : (
-											<span>Select dates</span>
+											<span>{t('select-dates')}</span>
 										)}
 									</Button>
 								</PopoverTrigger>
 								<PopoverContent className='w-auto p-0' align='center'>
 									<div className='p-3'>
 										<div className='mb-2 space-y-1'>
-											<h4 className='text-sm font-medium'>Check in - Check out</h4>
-											<p className='text-xs text-gray-500'>Select your stay dates</p>
+											<h4 className='text-sm font-medium'>{t('check-dates')}</h4>
+											<p className='text-xs text-gray-500'>{t('select-stay')}</p>
 										</div>
 										<DayPicker
 											mode='range'
@@ -234,7 +243,7 @@ const Header = () => {
 										/>
 										<div className='flex justify-end mt-4'>
 											<Button size='sm' onClick={() => setDatePickerOpen(false)}>
-												Apply
+												{t('apply')}
 											</Button>
 										</div>
 									</div>
@@ -247,7 +256,7 @@ const Header = () => {
 								) : (
 									<Search className='w-4 h-4 mr-1' />
 								)}
-								Search
+								{t('search')}
 							</Button>
 						</form>
 					</div>
@@ -306,7 +315,7 @@ const Header = () => {
 											className='cursor-pointer'
 										>
 											<User className='w-4 h-4 mr-2' />
-											<span>Profile</span>
+											<span>{t('profile')}</span>
 										</DropdownMenuItem>
 									</DropdownMenuGroup>
 									<DropdownMenuSeparator />
@@ -315,7 +324,7 @@ const Header = () => {
 										className='text-red-600 cursor-pointer focus:text-red-600'
 									>
 										<LogOut className='w-4 h-4 mr-2' />
-										<span>Log out</span>
+										<span>{t('logout')}</span>
 									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
@@ -323,12 +332,12 @@ const Header = () => {
 							<div className='flex gap-2'>
 								<Link href='/auth/login'>
 									<Button variant='ghost' size='sm' className='hidden sm:inline-flex'>
-										Log in
+										{t('login')}
 									</Button>
 								</Link>
 								<Link href='/auth/register'>
 									<Button size='sm' className='bg-blue-600 hover:bg-blue-700'>
-										Sign up
+										{t('register')}
 									</Button>
 								</Link>
 							</div>
@@ -347,7 +356,7 @@ const Header = () => {
 									<div className='relative w-10 h-10 overflow-hidden rounded-full'>
 										<Image src='/images/logo.jpg' alt='logo' fill className='object-cover' />
 									</div>
-									<span className='text-lg font-semibold'>HomeStay</span>
+									<span className='text-lg font-semibold'>{t('homestay')}</span>
 								</div>
 
 								{/* Mobile search form */}
@@ -364,7 +373,7 @@ const Header = () => {
 									</div>
 
 									<div className='space-y-2'>
-										<label className='text-sm font-medium'>Check in - Check out</label>
+										<label className='text-sm font-medium'>{t('check-dates')}</label>
 										<Popover>
 											<PopoverTrigger asChild>
 												<Button
@@ -378,7 +387,7 @@ const Header = () => {
 															{format(checkOutDate, 'MMM d')}
 														</span>
 													) : (
-														<span>Select dates</span>
+														<span>{t('select-dates')}</span>
 													)}
 												</Button>
 											</PopoverTrigger>
@@ -403,28 +412,40 @@ const Header = () => {
 										) : (
 											<Search className='w-4 h-4 mr-2' />
 										)}
-										Search Homestays
+										{t('search')}
 									</Button>
 								</form>
 
 								{/* Mobile navigation */}
 								<nav className='mb-6 space-y-1'>
-									{NAV_ITEMS.map((item) => (
-										<Link
-											key={item.href}
-											href={item.href}
-											className={`
-                        flex items-center px-3 py-3 rounded-md text-base font-medium transition-colors
-                        ${
-							isActivePath(item.href)
-								? 'text-blue-600 bg-blue-50'
-								: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
-						}
-                      `}
-										>
-											{item.label}
-										</Link>
-									))}
+									<Link
+										key='/home-stay'
+										href='/home-stay'
+										className={`
+                    px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    ${
+						isActivePath('/home-stay')
+							? 'text-blue-600 bg-blue-50'
+							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+					}
+                  `}
+									>
+										{t('homestays')}
+									</Link>
+									<Link
+										key='/posts'
+										href='/posts'
+										className={`
+                    px-3 py-2 rounded-md text-sm font-medium transition-colors
+                    ${
+						isActivePath('/posts')
+							? 'text-blue-600 bg-blue-50'
+							: 'text-gray-700 hover:text-blue-600 hover:bg-gray-50'
+					}
+                  `}
+									>
+										{t('posts')}
+									</Link>
 								</nav>
 
 								<div className='mt-auto space-y-4'>

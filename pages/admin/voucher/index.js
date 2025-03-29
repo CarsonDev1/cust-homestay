@@ -38,6 +38,7 @@ const VoucherList = () => {
 		startDate: new Date().toISOString().split('T')[0],
 		endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
 		isDeleted: false,
+		quantityUsed: '',
 	});
 
 	const queryClient = useQueryClient();
@@ -307,17 +308,16 @@ const VoucherList = () => {
 							</div>
 						</div>
 						{/* Other form fields remain the same */}
-						{/* <div className='grid gap-2'>
-							<Label htmlFor='code'>Voucher Code</Label>
+						<div className='grid gap-2'>
+							<Label htmlFor='code'>Quantity</Label>
 							<Input
-								id='code'
-								name='code'
-								value={voucherData.code}
+								id='quantityUsed'
+								name='quantityUsed'
+								value={voucherData.quantityUsed}
 								onChange={handleChange}
 								required
-								disabled={editMode}
 							/>
-						</div> */}
+						</div>
 						<div className='grid gap-2'>
 							<Label htmlFor='discount'>Discount (%)</Label>
 							<Input
@@ -506,6 +506,7 @@ const VoucherList = () => {
 							<TableHead>Code</TableHead>
 							<TableHead>Description</TableHead>
 							<TableHead>Discount (%)</TableHead>
+							<TableHead>Quantity</TableHead>
 							<TableHead>Start Date</TableHead>
 							<TableHead>End Date</TableHead>
 							<TableHead>Action</TableHead>
@@ -520,6 +521,7 @@ const VoucherList = () => {
 								<TableCell className='font-medium'>{voucher.code}</TableCell>
 								<TableCell>{voucher.description}</TableCell>
 								<TableCell>{voucher.discount}%</TableCell>
+								<TableCell>{voucher.quantityUsed}</TableCell>
 								<TableCell>{new Date(voucher.startDate).toLocaleDateString('vi')}</TableCell>
 								<TableCell>{new Date(voucher.endDate).toLocaleDateString('vi')}</TableCell>
 								<TableCell>
