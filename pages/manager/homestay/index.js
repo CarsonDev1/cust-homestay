@@ -24,6 +24,8 @@ import {
 	FilterX,
 	Eye,
 	Lock,
+	AlertCircle,
+	RefreshCw,
 } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Link from 'next/link';
@@ -56,6 +58,32 @@ import TTLockUserLocksDialog from '@/components/TTLockUserLocksDialog';
 import { editTTLockAccount } from 'pages/api/ttlock/editTTLockAccount';
 
 const Homestay = () => {
+	useEffect(() => {
+		Swal.fire({
+			didOpen: () => {
+				const sweetAlertContainer = document.querySelector('.swal2-container');
+				if (sweetAlertContainer) {
+					sweetAlertContainer.style.zIndex = '9999';
+				}
+			},
+			customClass: {
+				container: 'swal-higher-z-index',
+			},
+		}).close();
+
+		const style = document.createElement('style');
+		style.innerHTML = `
+      .swal2-container {
+        z-index: 9999 !important;
+      }
+    `;
+		document.head.appendChild(style);
+
+		return () => {
+			document.head.removeChild(style);
+		};
+	}, []);
+
 	const queryClient = useQueryClient();
 	const { dataProfile } = useAuth();
 	const [selectedHomeStayID, setSelectedHomeStayID] = useState(null);
@@ -134,7 +162,7 @@ const Homestay = () => {
 
 	const [filters, setFilters] = useState({
 		amenityNames: [],
-		priceRange: [0, 1000],
+		priceRange: [0, 99999999],
 		standard: [],
 		searchText: '',
 	});
@@ -193,8 +221,14 @@ const Homestay = () => {
 		refetch: refetchHomeStays,
 		error,
 	} = useQuery({
-		queryKey: ['homeStaysByUser', dataProfile?.id],
-		queryFn: () => getHomeStayByUser(dataProfile?.id),
+		queryKey: ['homeStaysByUser', dataProfile?.id, filters],
+		queryFn: () =>
+			getHomeStayByUser(dataProfile?.id, {
+				amenityNames: filters.amenityNames,
+				priceRange: filters.priceRange,
+				standard: filters.standard,
+				searchText: filters.searchText,
+			}),
 		enabled: !!dataProfile?.id,
 	});
 
@@ -203,7 +237,7 @@ const Homestay = () => {
 		let count = 0;
 		if (filters.amenityNames.length > 0) count++;
 		if (filters.standard.length > 0) count++;
-		if (filters.priceRange[0] > 0 || filters.priceRange[1] < 1000) count++;
+		if (filters.priceRange[0] > 0 || filters.priceRange[1] < 99999999) count++;
 		if (filters.searchText) count++;
 		setActiveFiltersCount(count);
 	}, [filters]);
@@ -228,12 +262,11 @@ const Homestay = () => {
 	const clearFilters = () => {
 		setFilters({
 			amenityNames: [],
-			priceRange: [0, 1000],
+			priceRange: [0, 99999999],
 			standard: [],
 			searchText: '',
 		});
 	};
-
 	const toggleFilter = () => {
 		setIsFilterExpanded(!isFilterExpanded);
 	};
@@ -390,7 +423,18 @@ const Homestay = () => {
 		},
 	});
 
+	// Modify your handleDelete function to close all dialogs first
 	const handleDelete = (homeStayID) => {
+		// Close all open dialogs first
+		setTTLockDialog((prev) => ({ ...prev, isOpen: false }));
+		setEditTTLockDialog((prev) => ({ ...prev, isOpen: false }));
+		setUserLocksDialog((prev) => ({ ...prev, isOpen: false }));
+		setFacilityDialog((prev) => ({ ...prev, isOpen: false }));
+		setManageFacilitiesDialog((prev) => ({ ...prev, isOpen: false }));
+		setAmenityDialog((prev) => ({ ...prev, isOpen: false }));
+		setManageAmenitiesDialog((prev) => ({ ...prev, isOpen: false }));
+
+		// Then show SweetAlert
 		Swal.fire({
 			title: 'Are you sure?',
 			text: "This action can't be undone!",
@@ -457,6 +501,15 @@ const Homestay = () => {
 	};
 
 	const handleDeleteFacility = (homeStayID, facilityID) => {
+		// Close all open dialogs
+		setTTLockDialog((prev) => ({ ...prev, isOpen: false }));
+		setEditTTLockDialog((prev) => ({ ...prev, isOpen: false }));
+		setUserLocksDialog((prev) => ({ ...prev, isOpen: false }));
+		setFacilityDialog((prev) => ({ ...prev, isOpen: false }));
+		setManageFacilitiesDialog((prev) => ({ ...prev, isOpen: false }));
+		setAmenityDialog((prev) => ({ ...prev, isOpen: false }));
+		setManageAmenitiesDialog((prev) => ({ ...prev, isOpen: false }));
+
 		Swal.fire({
 			title: 'Are you sure?',
 			text: "This action can't be undone!",
@@ -473,6 +526,15 @@ const Homestay = () => {
 	};
 
 	const handleDeleteAmenity = (homeStayID, amenityID) => {
+		// Close all open dialogs
+		setTTLockDialog((prev) => ({ ...prev, isOpen: false }));
+		setEditTTLockDialog((prev) => ({ ...prev, isOpen: false }));
+		setUserLocksDialog((prev) => ({ ...prev, isOpen: false }));
+		setFacilityDialog((prev) => ({ ...prev, isOpen: false }));
+		setManageFacilitiesDialog((prev) => ({ ...prev, isOpen: false }));
+		setAmenityDialog((prev) => ({ ...prev, isOpen: false }));
+		setManageAmenitiesDialog((prev) => ({ ...prev, isOpen: false }));
+
 		Swal.fire({
 			title: 'Are you sure?',
 			text: "This action can't be undone!",
@@ -672,20 +734,21 @@ const Homestay = () => {
 							<div className='flex items-center justify-between mb-2'>
 								<h3 className='text-lg font-medium'>Price Range</h3>
 								<span className='text-sm text-gray-500'>
-									${filters.priceRange[0]} - ${filters.priceRange[1]}
+									${filters.priceRange[0]} -{' '}
+									{filters.priceRange[1] === 10000 ? 'Unlimited' : `$${filters.priceRange[1]}`}
 								</span>
 							</div>
 							<Slider
 								min={0}
-								max={1000}
-								step={50}
+								max={99999999}
+								step={100}
 								value={filters.priceRange}
 								onValueChange={handlePriceChange}
 								className='w-full'
 							/>
 							<div className='flex justify-between mt-2 text-sm text-gray-600'>
 								<span>$0</span>
-								<span>$1000</span>
+								<span>Unlimited</span>
 							</div>
 						</div>
 
@@ -885,7 +948,7 @@ const Homestay = () => {
 													<span className='font-medium text-gray-700'>Today's Rate:</span>
 													{priceForToday !== null ? (
 														<span className='text-xl font-bold text-green-600'>
-															${priceForToday}
+															${priceForToday.toLocaleString()}
 														</span>
 													) : (
 														<span className='px-2 py-1 text-sm text-red-600 bg-red-100 rounded'>
@@ -904,7 +967,7 @@ const Homestay = () => {
 												</Button>
 											</Link>
 
-											<div className='grid grid-cols-7 gap-2'>
+											<div className='grid grid-cols-4 gap-2'>
 												<Link
 													href={`/manager/homestay/edit/${homeStay.id}`}
 													className='col-span-1'

@@ -72,8 +72,13 @@ const CreateHomeStay = () => {
 			setErrors({});
 			setTouched({});
 		},
-		onError: () => {
-			toast.error('Failed to create homestay. Please try again.');
+		onError: (error) => {
+			console.error('Error from API:', error);
+			if (error.message && error.message.includes('Duplicate homestay name')) {
+				toast.error('Homestay name already exists. Please choose a different name.');
+			} else {
+				toast.error(`Failed to create homestay: ${error.message}`);
+			}
 		},
 	});
 
