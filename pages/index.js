@@ -3,7 +3,6 @@ import Explore from '@/components/Explore';
 import Hero from '@/components/Hero';
 import MediumCards from '@/components/MediumCards';
 import MainLayout from './layout';
-import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import AmenityList from '@/components/AmenityList';
 import VoucherCard from '@/components/VoucherCard';
@@ -11,13 +10,28 @@ import { useRouter } from 'next/router';
 import { useQuery } from '@tanstack/react-query';
 import { getPaymentReturn } from './api/payment/getPaymentReturn';
 import { useEffect } from 'react';
+import { useAuth } from 'context/AuthProvider';
+import { toast } from 'sonner';
 
 export default function Home() {
-	const { t } = useTranslation('common');
 	const router = useRouter();
 	const { code, id, cancel, status, orderCode } = router.query;
 
 	const hasPaymentParams = !!(code || id || cancel || status || orderCode);
+
+	const { dataProfile, isLoading: isLoadingAuth, isAuthenticated } = useAuth();
+
+	useEffect(() => {
+		if (!isLoadingAuth && isAuthenticated && dataProfile) {
+			if (dataProfile.role === 'Manager') {
+				toast.warning('Bạn đang sử dụng tài khoản quản lý. Đang chuyển hướng đến trang quản lý...');
+				router.push('/manager');
+			} else if (dataProfile.role === 'Admin') {
+				toast.warning('Bạn đang sử dụng tài khoản quản trị. Đang chuyển hướng đến trang quản trị...');
+				router.push('/admin');
+			}
+		}
+	}, [isLoadingAuth, isAuthenticated, dataProfile, router]);
 
 	useEffect(() => {
 		if (router.isReady && hasPaymentParams) {

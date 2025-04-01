@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { deletePost } from 'pages/api/posts/deletePost';
 import Swal from 'sweetalert2';
-import { Pencil, Trash2, PlusCircle, Calendar, MapPin, FileText } from 'lucide-react';
+import { Pencil, Trash2, PlusCircle, Calendar, MapPin, FileText, AlertTriangle } from 'lucide-react';
 import AdminLayout from '../layout';
 import { getPostsByUser } from 'pages/api/posts/getPostsByUser';
 
@@ -181,6 +181,23 @@ const Post = () => {
 											<p className='mb-4 text-sm text-gray-600 line-clamp-2'>
 												{post?.description || 'No description available.'}
 											</p>
+
+											{/* Hiển thị reason reject khi bài viết bị từ chối */}
+											{post.status === 'Rejected' && post.reasonReject && (
+												<div className='p-2 mb-4 rounded-md bg-red-50'>
+													<div className='flex items-start'>
+														<AlertTriangle size={16} className='mt-0.5 mr-2 text-red-500' />
+														<div>
+															<h4 className='text-xs font-semibold text-red-800'>
+																Rejection Reason:
+															</h4>
+															<p className='text-xs text-red-700 line-clamp-3'>
+																{post.reasonReject}
+															</p>
+														</div>
+													</div>
+												</div>
+											)}
 
 											<div className='flex items-center gap-2 pt-2 border-t border-gray-100'>
 												<Link href={`/manager/posts/edit/${post.id}`} className='flex-1'>
