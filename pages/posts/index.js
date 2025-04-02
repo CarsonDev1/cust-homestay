@@ -83,7 +83,7 @@ const FeaturedPost = ({ post }) => {
 							<div className='absolute bottom-0 left-0 p-6 md:hidden'>
 								<Badge className='mb-2 text-white bg-blue-600 border-0'>Featured Post</Badge>
 								<h2 className='mb-2 text-2xl font-bold text-white'>{post.title}</h2>
-								<div className='flex items-center space-x-3 text-sm text-white/80'>
+								<div className='flex flex-col items-center text-sm text-white/80'>
 									<span className='flex items-center'>
 										<Calendar className='w-4 h-4 mr-1' />
 										{formattedDate}
@@ -111,7 +111,7 @@ const FeaturedPost = ({ post }) => {
 							{post.title}
 						</h2>
 
-						<div className='items-center hidden mb-3 space-x-3 text-sm text-gray-500 md:flex'>
+						<div className='flex-col hidden gap-2 mb-3 text-sm text-gray-500 md:flex'>
 							<span className='flex items-center'>
 								<Calendar className='w-4 h-4 mr-1' />
 								{formattedDate}

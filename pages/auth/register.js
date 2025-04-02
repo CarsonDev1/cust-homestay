@@ -9,9 +9,10 @@ import { Textarea } from '@/components/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
-import { toast } from 'react-toastify';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import AuthLayout from './auth-layout';
+import { toast } from 'sonner';
 
 export default function RegisterForm() {
 	const [isManager, setIsManager] = useState(false);
@@ -62,7 +63,7 @@ export default function RegisterForm() {
 	const password = watch('password');
 
 	return (
-		<div>
+		<AuthLayout>
 			<div className='relative flex items-center justify-center h-screen p-4 bg-gray-100'>
 				<Image src='/images/authen/bg-authen.jpg' fill alt='bg-authen' />
 				<Card className='relative z-50 w-full max-w-xl bg-white/80'>
@@ -204,6 +205,6 @@ export default function RegisterForm() {
 					</form>
 				</Card>
 			</div>
-		</div>
+		</AuthLayout>
 	);
 }

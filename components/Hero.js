@@ -21,18 +21,18 @@ const Hero = () => {
 		>
 			<div className='absolute inset-0 bg-blue-900/20 mix-blend-multiply'></div>
 
-			<div className='container-lg z-10 flex flex-col gap-10 py-16'>
-				<div className='max-w-3xl text-white flex flex-col gap-5'>
+			<div className='z-10 flex flex-col gap-10 py-16 container-lg'>
+				<div className='flex flex-col max-w-3xl gap-5 text-white'>
 					<h1 className='font-extrabold text-[clamp(2.5rem,6vw,3rem)] leading-tight tracking-tight'>
 						{t('hero.title')}
 						<span className='block text-blue-300'>HomeStays</span>
 					</h1>
-					<p className='text-lg text-gray-100 font-light max-w-lg'>{t('hero.subtitle')}</p>
+					<p className='max-w-lg text-lg font-light text-gray-100'>{t('hero.subtitle')}</p>
 
 					{!dataProfile && (
 						<div className='flex flex-wrap gap-3 mt-2'>
 							<Link href='/auth/register'>
-								<Button size='lg' className='bg-blue-600 hover:bg-blue-700 text-white font-medium px-6'>
+								<Button size='lg' className='px-6 font-medium text-white bg-blue-600 hover:bg-blue-700'>
 									{t('register')}
 								</Button>
 							</Link>
@@ -40,7 +40,7 @@ const Hero = () => {
 								<Button
 									size='lg'
 									variant='ghost'
-									className='border-white text-white hover:bg-opacity-0 hover:text-white font-medium px-6'
+									className='px-6 font-medium text-white border-white hover:bg-opacity-0 hover:text-white'
 								>
 									{t('login')}
 								</Button>
@@ -52,18 +52,18 @@ const Hero = () => {
 						<Link href='/home-stay' className='group w-fit'>
 							<Button
 								size='lg'
-								className='border-white border text-white hover:bg-white/10 font-medium px-6'
+								className='px-6 font-medium text-white border border-white hover:bg-white/10'
 							>
 								{t('hero.cta')}
-								<ChevronRight className='ml-1 h-4 w-4 transition-transform group-hover:translate-x-1' />
+								<ChevronRight className='w-4 h-4 ml-1 transition-transform group-hover:translate-x-1' />
 							</Button>
 						</Link>
 					)}
 				</div>
 
-				<div className='w-full max-w-4xl mx-auto mt-4'>
+				{/* <div className='w-full max-w-4xl mx-auto mt-4'>
 					<SearchForm />
-				</div>
+				</div> */}
 			</div>
 		</section>
 	);

@@ -127,12 +127,8 @@ const BookingHomestay = () => {
 	// Helper function to get button text based on current status
 	const getButtonText = (status) => {
 		switch (status) {
-			case 'Confirmed':
-				return 'Mark as Paid';
 			case 'Paid':
 				return 'Complete';
-			default:
-				return 'Update Status';
 		}
 	};
 

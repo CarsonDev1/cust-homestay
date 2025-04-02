@@ -21,6 +21,7 @@ export default function Home() {
 
 	const { dataProfile, isLoading: isLoadingAuth, isAuthenticated } = useAuth();
 
+	// Role-based redirection
 	useEffect(() => {
 		if (!isLoadingAuth && isAuthenticated && dataProfile) {
 			if (dataProfile.role === 'Manager') {
@@ -33,56 +34,89 @@ export default function Home() {
 		}
 	}, [isLoadingAuth, isAuthenticated, dataProfile, router]);
 
-	useEffect(() => {
-		if (router.isReady && hasPaymentParams) {
-			if (status === 'CANCELLED') {
-				router.push('/payment-error');
-			} else if (status === 'PAID') {
-				router.push({
-					pathname: '/payment-success',
-					query: {
-						orderCode: orderCode,
-						status: status,
-					},
-				});
-			}
-		}
-	}, [router.isReady, status, orderCode, hasPaymentParams, router]);
-
-	const { data, isLoading, isError } = useQuery({
+	// Payment status handling
+	const { data, isLoading, isError, error } = useQuery({
 		queryKey: ['paymentReturn', code, id, cancel, status, orderCode],
-		queryFn: () => getPaymentReturn(code, id, cancel, status, orderCode),
-		enabled: hasPaymentParams && router.pathname === '/' && !['CANCELLED', 'PAID'].includes(status),
+		queryFn: () => {
+			console.log('Payment Return Query Params:', { code, id, cancel, status, orderCode });
+			return getPaymentReturn(code, id, cancel, status, orderCode);
+		},
+		enabled: hasPaymentParams && router.pathname === '/',
 		refetchOnWindowFocus: false,
-		onSuccess: (data) => {
-			console.log('Payment return processed successfully:', data);
-			// Check the API response status as well (if your API returns a status)
-			if (data.status === 'CANCELLED' || cancel === 'true') {
-				router.push('/payment-error');
-			} else {
-				router.push({
-					pathname: '/payment-success',
-					query: {
-						orderCode: orderCode,
-						status: data.status || status,
-					},
-				});
-			}
-		},
-		onError: (error) => {
-			console.error('Payment return processing failed:', error);
-			router.push('/payment-error');
-		},
+		retry: 1,
 	});
 
+	// Side effect for handling payment return
+	useEffect(() => {
+		const handlePaymentReturn = async () => {
+			try {
+				console.log('Payment Return Data:', data);
+				console.log('Payment Return Error:', error);
+
+				// Direct query param handling
+				if (status === 'CANCELLED') {
+					router.push({
+						pathname: '/payment-error',
+						query: { orderCode, status },
+					});
+					return;
+				}
+
+				if (status === 'PAID') {
+					router.push({
+						pathname: '/payment-success',
+						query: { orderCode, status },
+					});
+					return;
+				}
+
+				// Handle data from API response
+				if (data) {
+					if (data.status === 'CANCELLED' || cancel === 'true') {
+						router.push({
+							pathname: '/payment-error',
+							query: {
+								orderCode: orderCode || data.orderCode,
+								status: data.status || status,
+							},
+						});
+					} else if (data.status === 'PAID') {
+						router.push({
+							pathname: '/payment-success',
+							query: {
+								orderCode: orderCode || data.orderCode,
+								status: data.status || status,
+							},
+						});
+					}
+				}
+			} catch (processingError) {
+				console.error('Payment processing error:', processingError);
+				router.push({
+					pathname: '/payment-error',
+					query: {
+						orderCode,
+						status: 'ERROR',
+						message: processingError.message,
+					},
+				});
+			}
+		};
+
+		if (router.isReady && hasPaymentParams) {
+			handlePaymentReturn();
+		}
+	}, [router.isReady, status, orderCode, hasPaymentParams, router, data, error]);
+
+	// Loading state for payment processing
 	if (isLoading && hasPaymentParams) {
 		return (
 			<MainLayout>
 				<div className='flex items-center justify-center min-h-screen'>
 					<div className='p-6 text-center bg-white rounded-lg shadow-lg'>
 						<div className='w-12 h-12 mx-auto mb-4 border-b-2 rounded-full animate-spin border-primary'></div>
-						<p className='text-lg font-medium'>Processing your payment...</p>
-						<p className='mt-2 text-sm text-gray-500'>Please don't close this window</p>
+						<p className='text-lg font-medium'>Đang xử lý thanh toán...</p>
+						<p className='mt-2 text-sm text-gray-500'>Vui lòng không đóng cửa sổ này</p>
 					</div>
 				</div>
 			</MainLayout>
