@@ -665,8 +665,7 @@ export default function ProfilePage() {
 																			</p>
 																		</div>
 																		<div className='flex mt-3 space-x-2'>
-																			{(booking.status === 'Pending' ||
-																				booking.status === 'Confirmed') && (
+																			{booking.status === 'Paid' && (
 																				<Button
 																					size='sm'
 																					variant='destructive'
