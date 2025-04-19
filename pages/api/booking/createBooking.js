@@ -1,5 +1,5 @@
 export const createBooking = async (userId, bookingData) => {
-	const url = 'https://homestaybooking-001-site1.ntempurl.com/api/Booking/create';
+	const url = 'https://sondc1234-001-site1.anytempurl.com/api/Booking/create';
 
 	try {
 		// Ensure proper format of payload based on Postman example

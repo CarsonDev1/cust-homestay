@@ -1,6 +1,6 @@
 // Updated createHomeStay function
 export const createHomeStay = async (userId, homeStayData) => {
-	const url = 'https://homestaybooking-001-site1.ntempurl.com/api/HomeStay/add-home-stay';
+	const url = 'https://sondc1234-001-site1.anytempurl.com/api/HomeStay/add-home-stay';
 
 	try {
 		const response = await fetch(url, {

@@ -31,7 +31,7 @@ api.interceptors.response.use(
 				try {
 					// Call the refresh token endpoint with PUT method
 					const response = await axios.put(
-						'https://homestaybooking-001-site1.ntempurl.com/api/Auth/access-token',
+						'https://sondc1234-001-site1.anytempurl.com/api/Auth/access-token',
 						{ refreshToken },
 						{
 							headers: {

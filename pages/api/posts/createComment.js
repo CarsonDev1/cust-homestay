@@ -1,5 +1,5 @@
 export const createComment = async (userId, commentData) => {
-	const url = 'https://homestaybooking-001-site1.ntempurl.com/api/Post/create-comment';
+	const url = 'https://sondc1234-001-site1.anytempurl.com/api/Post/create-comment';
 
 	try {
 		const response = await fetch(url, {

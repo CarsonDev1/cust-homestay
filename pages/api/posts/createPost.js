@@ -1,5 +1,5 @@
 export const createPost = async (userId, postData) => {
-	const url = 'https://homestaybooking-001-site1.ntempurl.com/api/Post/create';
+	const url = 'https://sondc1234-001-site1.anytempurl.com/api/Post/create';
 
 	try {
 		const response = await fetch(url, {

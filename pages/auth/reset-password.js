@@ -49,7 +49,7 @@ const ResetPassword = () => {
 
 		setLoading(true);
 		try {
-			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/reset-password', {
+			const response = await fetch('https://sondc1234-001-site1.anytempurl.com/api/Auth/reset-password', {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
