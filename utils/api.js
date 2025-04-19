@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-	baseURL: 'https://homestaybooking-001-site1.ntempurl.com/api',
+	baseURL: 'https://sondc1234-001-site1.anytempurl.com/api',
 	headers: {
 		'Content-Type': 'application/json',
 	},
