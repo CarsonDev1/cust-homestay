@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getAllFacility } from 'pages/api/facility/getFacility';
 import { Skeleton } from './components/ui/skeleton';
 import { MapPin, Coffee, Wifi, Car, ChefHat, Home, Waves, Sofa } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 // Helper function to get appropriate icon for facility
 const getFacilityIcon = (name) => {
@@ -24,6 +25,8 @@ const getFacilityIcon = (name) => {
 };
 
 const Explore = () => {
+	const { t } = useTranslation('common');
+
 	const { data, isLoading, error } = useQuery({
 		queryKey: ['facilities'],
 		queryFn: getAllFacility,
@@ -34,57 +37,55 @@ const Explore = () => {
 	return (
 		<section className='py-16 bg-white'>
 			<div className='container-lg'>
-				<div className='mb-8 flex flex-col md:flex-row justify-between items-start md:items-center'>
+				<div className='flex flex-col items-start justify-between mb-8 md:flex-row md:items-center'>
 					<div>
-						<h2 className='text-3xl font-bold mb-2'>
-							Nearby <span className='text-blue-600'>Facilities</span>
+						<h2 className='mb-2 text-3xl font-bold'>
+							<span className='text-blue-600'>{t('facilities.facilities')}</span>
 						</h2>
-						<p className='text-gray-600 max-w-2xl'>
-							Discover convenient amenities and attractions close to our homestays
-						</p>
+						<p className='max-w-2xl text-gray-600'>{t('facilities.description')}</p>
 					</div>
 				</div>
 
 				{isLoading ? (
-					<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+					<div className='grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
 						{Array(8)
 							.fill(0)
 							.map((_, index) => (
-								<div key={index} className='rounded-xl p-4 border border-gray-100 shadow-sm'>
+								<div key={index} className='p-4 border border-gray-100 shadow-sm rounded-xl'>
 									<div className='flex items-center gap-3 mb-3'>
-										<Skeleton className='h-10 w-10 rounded-full' />
-										<Skeleton className='h-6 w-40' />
+										<Skeleton className='w-10 h-10 rounded-full' />
+										<Skeleton className='w-40 h-6' />
 									</div>
-									<Skeleton className='h-4 w-full mb-2' />
-									<Skeleton className='h-4 w-3/4' />
+									<Skeleton className='w-full h-4 mb-2' />
+									<Skeleton className='w-3/4 h-4' />
 								</div>
 							))}
 					</div>
 				) : error ? (
-					<div className='text-center p-6 bg-red-50 rounded-lg text-red-600'>
-						Something went wrong while loading facilities. Please try again.
+					<div className='p-6 text-center text-red-600 rounded-lg bg-red-50'>
+						{t('facilities.errorLoading')}
 					</div>
 				) : facility?.length === 0 ? (
-					<div className='text-center p-6 bg-gray-50 rounded-lg text-gray-600'>
-						No facilities available at this time.
+					<div className='p-6 text-center text-gray-600 rounded-lg bg-gray-50'>
+						{t('facilities.noFacilities')}
 					</div>
 				) : (
-					<div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+					<div className='grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
 						{facility?.map((item, index) => (
 							<div
 								key={index}
-								className='group flex flex-col p-5 rounded-xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer'
+								className='flex flex-col p-5 transition-all duration-300 bg-white border border-gray-100 shadow-sm cursor-pointer group rounded-xl hover:shadow-md'
 							>
 								<div className='flex items-center gap-3 mb-3'>
-									<div className='flex items-center justify-center w-10 h-10 rounded-full bg-blue-50 group-hover:bg-blue-100 transition-colors'>
+									<div className='flex items-center justify-center w-10 h-10 transition-colors rounded-full bg-blue-50 group-hover:bg-blue-100'>
 										{getFacilityIcon(item.name)}
 									</div>
-									<h3 className='text-lg font-semibold group-hover:text-blue-600 transition-colors'>
+									<h3 className='text-lg font-semibold transition-colors group-hover:text-blue-600'>
 										{item.name}
 									</h3>
 								</div>
-								<p className='text-gray-600 text-sm line-clamp-2'>
-									{item.description || 'No description available'}
+								<p className='text-sm text-gray-600 line-clamp-2'>
+									{item.description || t('facilities.noDescription')}
 								</p>
 							</div>
 						))}

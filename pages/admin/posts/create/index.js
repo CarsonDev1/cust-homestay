@@ -88,7 +88,7 @@ const createPostPage = () => {
 	};
 
 	return (
-		<AdminLayout>
+		<ManagerLayout>
 			<div className=''>
 				<h2 className='mb-4 text-2xl font-bold'>Create a New Post</h2>
 				<form onSubmit={handleSubmit} className='space-y-4'>
@@ -162,7 +162,7 @@ const createPostPage = () => {
 					</Button>
 				</form>
 			</div>
-		</AdminLayout>
+		</ManagerLayout>
 	);
 };
 

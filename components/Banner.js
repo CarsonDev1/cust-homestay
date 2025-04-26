@@ -1,15 +1,18 @@
 import styled from 'styled-components';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 
 const Banner = () => {
+	const { t } = useTranslation('common');
+
 	return (
 		<div className='sec-com'>
 			<div className='container-lg'>
 				<BannerSection>
 					<span>
-						<h2>Not sure where to go? Perfect.</h2>
+						<h2>{t('banner.heading')}</h2>
 						<a href='#' className='btn btn-dark'>
-							{"I'm flexible"}
+							{t('banner.buttonText')}
 						</a>
 					</span>
 				</BannerSection>

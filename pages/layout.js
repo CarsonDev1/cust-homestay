@@ -17,7 +17,7 @@ const MainLayout = ({ children }) => {
 				/>
 				<link rel='icon' href='images/logo.svg' />
 			</Head>
-			<main className='w-full relative'>
+			<main className='relative w-full'>
 				<div>
 					<Header />
 					{children}

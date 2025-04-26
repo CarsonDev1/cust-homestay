@@ -52,8 +52,8 @@ export default function LoginForm() {
 				const accessToken = responseData.accessToken;
 				const refreshToken = responseData.refreshToken;
 				const role = responseData.role;
-				localStorage.setItem('accessToken', accessToken);
-				localStorage.setItem('refreshToken', refreshToken);
+				sessionStorage.setItem('accessToken', accessToken);
+				sessionStorage.setItem('refreshToken', refreshToken);
 				login({ accessToken, refreshToken });
 
 				toast.success('Login successful! Redirecting...');

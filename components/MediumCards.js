@@ -35,7 +35,7 @@ const MediumCards = () => {
 			<div className='container-lg'>
 				<div className='mb-10 text-center md:text-left'>
 					<h2 className='mb-3 text-3xl font-bold'>
-						{t('top-rated')} <span className='text-blue-600'>HomeStays</span>
+						<span className='text-blue-600'>Home Stay</span>
 					</h2>
 					<p className='w-full text-gray-600'>{t('discover')}</p>
 				</div>

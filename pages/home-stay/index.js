@@ -5,8 +5,11 @@ import { getAllAmenity } from 'pages/api/amenity/getAmenity';
 import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import MainLayout from 'pages/layout';
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'next-i18next';
 
 const HomeStay = () => {
+	const { t } = useTranslation('common');
+
 	const [searchParams, setSearchParams] = useState({
 		amenityNames: [],
 		minPrice: 0,
@@ -184,17 +187,19 @@ const HomeStay = () => {
 							<div className='sticky overflow-hidden bg-white rounded-lg shadow-md top-20'>
 								{/* Sidebar Header */}
 								<div className='px-6 py-4 bg-indigo-600'>
-									<h2 className='text-xl font-semibold text-white'>Search</h2>
+									<h2 className='text-xl font-semibold text-white'>{t('homestay.search')}</h2>
 								</div>
 
 								<div className='p-6 space-y-6'>
 									{/* Price Range */}
 									<div>
-										<h3 className='mb-3 text-lg font-medium text-gray-900'>Price</h3>
+										<h3 className='mb-3 text-lg font-medium text-gray-900'>
+											{t('homestay.price')}
+										</h3>
 										<div className='space-y-4'>
 											<div>
 												<label className='block mb-1 text-sm font-medium text-gray-700'>
-													Minimum Price:
+													{t('homestay.minimumPrice')}:
 												</label>
 												<input
 													type='number'
@@ -205,7 +210,7 @@ const HomeStay = () => {
 											</div>
 											<div>
 												<label className='block mb-1 text-sm font-medium text-gray-700'>
-													Maximum Price:
+													{t('homestay.maximumPrice')}:
 												</label>
 												<input
 													type='number'
@@ -222,11 +227,15 @@ const HomeStay = () => {
 
 									{/* Amenities */}
 									<div>
-										<h3 className='mb-3 text-lg font-medium text-gray-900'>Amenities</h3>
+										<h3 className='mb-3 text-lg font-medium text-gray-900'>
+											{t('amenitiesLabel')}
+										</h3>
 										{loadingAmenity ? (
-											<p className='text-sm text-gray-500'>Loading amenities...</p>
+											<p className='text-sm text-gray-500'>{t('homestay.loadingAmenities')}</p>
 										) : errorAmenity ? (
-											<p className='text-sm text-red-500'>Error loading amenities</p>
+											<p className='text-sm text-red-500'>
+												{t('homestay.errorLoadingAmenities')}
+											</p>
 										) : (
 											<div className='space-y-2'>
 												{availableAmenities.map((amenity, index) => (
@@ -255,7 +264,9 @@ const HomeStay = () => {
 
 									{/* Standard */}
 									<div>
-										<h3 className='mb-3 text-lg font-medium text-gray-900'>Standard</h3>
+										<h3 className='mb-3 text-lg font-medium text-gray-900'>
+											{t('homestay.standard')}
+										</h3>
 										<div className='space-y-2'>
 											{standardOptions.map((option) => (
 												<div className='flex items-center' key={option}>
@@ -317,7 +328,9 @@ const HomeStay = () => {
 											d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
 										></path>
 									</svg>
-									<h3 className='mt-4 text-lg font-medium text-gray-900'>Loading homestays...</h3>
+									<h3 className='mt-4 text-lg font-medium text-gray-900'>
+										{t('homestay.loadingHomestays')}
+									</h3>
 								</div>
 							) : errorHomeStay ? (
 								<div className='p-10 text-center bg-white rounded-lg shadow-md'>
@@ -334,8 +347,10 @@ const HomeStay = () => {
 											d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
 										/>
 									</svg>
-									<h3 className='mt-2 text-lg font-medium text-gray-900'>Error Loading Data</h3>
-									<p className='mt-1 text-gray-500'>Could not load homestay listings.</p>
+									<h3 className='mt-2 text-lg font-medium text-gray-900'>
+										{t('homestay.errorLoadingData')}
+									</h3>
+									<p className='mt-1 text-gray-500'>{t('homestay.couldNotLoadListings')}</p>
 								</div>
 							) : filteredHomestays.length > 0 ? (
 								<div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
@@ -355,7 +370,7 @@ const HomeStay = () => {
 															src={homestay.mainImage}
 															width={200}
 															height={200}
-															alt='homestay img'
+															alt={t('homestay.homestayImage')}
 															className='object-cover w-full h-full rounded-tr-md rounded-tl-md'
 														/>
 													</div>
@@ -374,7 +389,7 @@ const HomeStay = () => {
 													</div>
 													{homestay.isBooked && (
 														<div className='absolute top-0 left-0 px-3 py-1 font-medium text-white bg-red-500 rounded-br-lg'>
-															Booked
+															{t('homestay.booked')}
 														</div>
 													)}
 												</div>
@@ -385,16 +400,20 @@ const HomeStay = () => {
 															{homestay.name}
 														</h3>
 														<p className='text-sm text-gray-500'>
-															<span className='font-medium'>Location:</span>{' '}
+															<span className='font-medium'>
+																{t('homestay.location')}:
+															</span>{' '}
 															{homestay.city}
 														</p>
 														<div className='font-bold text-blue-600'>
 															{priceForToday !== null ? (
 																<p className='text-lg text-green-600 md:text-xl'>
-																	${priceForToday.toLocaleString()}
+																	{priceForToday.toLocaleString()} VND
 																</p>
 															) : (
-																<p className='text-lg md:text-base'>Decommission</p>
+																<p className='text-lg md:text-base'>
+																	{t('homestay.decommission')}
+																</p>
 															)}
 														</div>
 
@@ -413,7 +432,7 @@ const HomeStay = () => {
 													<div className='mt-auto'>
 														<Link href={`/home-stay/${homestay.id}`}>
 															<button className='w-full py-2 font-medium text-white transition-colors duration-200 bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-																View Details
+																{t('homestay.viewDetails')}
 															</button>
 														</Link>
 													</div>
@@ -438,8 +457,10 @@ const HomeStay = () => {
 											d='M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
 										/>
 									</svg>
-									<h3 className='mt-2 text-lg font-medium text-gray-900'>No Results Found</h3>
-									<p className='mt-1 text-gray-500'>No results match your search criteria.</p>
+									<h3 className='mt-2 text-lg font-medium text-gray-900'>
+										{t('homestay.noResultsFound')}
+									</h3>
+									<p className='mt-1 text-gray-500'>{t('homestay.noResultsMatch')}</p>
 								</div>
 							)}
 						</div>

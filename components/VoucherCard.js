@@ -12,7 +12,6 @@ import { useTranslation } from 'next-i18next';
 
 const VoucherCard = () => {
 	const { t } = useTranslation('common');
-
 	const [copiedVoucher, setCopiedVoucher] = useState(null);
 	const { dataProfile } = useAuth();
 
@@ -31,11 +30,11 @@ const VoucherCard = () => {
 				voucherID: voucherID,
 			}),
 		onSuccess: () => {
-			toast.success('Voucher received successfully!');
+			toast.success(t('vouchers.receiveSuccess'));
 			refetch(); // Refetch the vouchers list after receiving one
 		},
 		onError: (error) => {
-			toast.error(error.response?.data?.message || 'Failed to receive voucher');
+			toast.error(error.response?.data?.message || t('vouchers.receiveFailed'));
 		},
 	});
 
@@ -44,17 +43,17 @@ const VoucherCard = () => {
 			.writeText(code)
 			.then(() => {
 				setCopiedVoucher(code);
-				toast.success(`Voucher code ${code} copied to clipboard!`);
+				toast.success(t('vouchers.codeCopied', { code }));
 				setTimeout(() => setCopiedVoucher(null), 2000);
 			})
 			.catch(() => {
-				toast.error('Failed to copy voucher code');
+				toast.error(t('vouchers.copyFailed'));
 			});
 	};
 
 	const handleReceiveVoucher = (voucherID) => {
 		if (!dataProfile?.id) {
-			toast.error('Please login to receive vouchers');
+			toast.error(t('vouchers.loginRequired'));
 			return;
 		}
 
@@ -65,7 +64,7 @@ const VoucherCard = () => {
 		try {
 			return format(new Date(dateString), 'MMM dd, yyyy');
 		} catch (error) {
-			return 'Invalid date';
+			return t('vouchers.invalidDate');
 		}
 	};
 
@@ -80,15 +79,15 @@ const VoucherCard = () => {
 				{isLoading ? (
 					<div className='flex flex-col items-center justify-center py-12'>
 						<div className='w-16 h-16 border-4 border-blue-200 rounded-full border-t-blue-600 animate-spin'></div>
-						<p className='mt-4 text-gray-600'>Loading vouchers...</p>
+						<p className='mt-4 text-gray-600'>{t('vouchers.loading')}</p>
 					</div>
 				) : error ? (
 					<div className='p-6 text-center bg-red-50 rounded-xl'>
-						<p className='text-red-600'>Error loading vouchers. Please try again later.</p>
+						<p className='text-red-600'>{t('vouchers.errorLoading')}</p>
 					</div>
 				) : voucherData.length === 0 ? (
 					<div className='p-8 text-center bg-gray-50 rounded-xl'>
-						<p className='text-gray-600'>No vouchers available at the moment. Please check back later.</p>
+						<p className='text-gray-600'>{t('vouchers.noVouchers')}</p>
 					</div>
 				) : (
 					<div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
@@ -101,21 +100,21 @@ const VoucherCard = () => {
 									{voucher.image ? (
 										<Image
 											src={voucher.image}
-											alt={voucher.description || 'Voucher image'}
+											alt={voucher.description || t('vouchers.voucherImage')}
 											fill
 											className='object-cover transition-transform duration-300 group-hover:scale-105'
 										/>
 									) : (
 										<div className='flex items-center justify-center w-full h-full bg-gradient-to-r from-blue-400 to-purple-500'>
 											<span className='text-4xl font-bold text-white'>
-												{voucher.discount}% OFF
+												{voucher.discount}% {t('vouchers.off')}
 											</span>
 										</div>
 									)}
 
 									{voucher.discount > 0 && (
 										<div className='absolute px-3 py-1 font-bold text-white bg-red-500 rounded-full shadow-md top-4 right-4'>
-											{voucher.discount}% OFF
+											{voucher.discount}% {t('vouchers.off')}
 										</div>
 									)}
 								</div>
@@ -132,7 +131,7 @@ const VoucherCard = () => {
 													? 'bg-green-100 text-green-600'
 													: 'bg-gray-100 text-gray-600 hover:bg-blue-100 hover:text-blue-600'
 											}`}
-											aria-label='Copy voucher code'
+											aria-label={t('vouchers.copyCode')}
 										>
 											{copiedVoucher === voucher.code ? (
 												<Check className='w-5 h-5' />
@@ -143,21 +142,27 @@ const VoucherCard = () => {
 									</div>
 
 									<h3 className='mb-2 text-lg font-semibold text-gray-800'>
-										{voucher.description || `${voucher.discount}% Discount Voucher`}
+										{voucher.description || `${voucher.discount}% ${t('vouchers.discountVoucher')}`}
 									</h3>
 
 									<div className='mb-6 space-y-2'>
 										<div className='flex items-center text-sm text-gray-600'>
 											<Calendar className='w-4 h-4 mr-2 text-blue-500' />
-											<span>Valid from: {formatDate(voucher.startDate)}</span>
+											<span>
+												{t('vouchers.validFrom')}: {formatDate(voucher.startDate)}
+											</span>
 										</div>
 										<div className='flex items-center text-sm text-gray-600'>
 											<Calendar className='w-4 h-4 mr-2 text-blue-500' />
-											<span>Valid until: {formatDate(voucher.endDate)}</span>
+											<span>
+												{t('vouchers.validUntil')}: {formatDate(voucher.endDate)}
+											</span>
 										</div>
 										<div className='flex items-center text-sm text-gray-600'>
 											<Tag className='w-4 h-4 mr-2 text-blue-500' />
-											<span>Discount: {voucher.discount}%</span>
+											<span>
+												{t('vouchers.discount')}: {voucher.discount}%
+											</span>
 										</div>
 									</div>
 
@@ -167,7 +172,7 @@ const VoucherCard = () => {
 											className='flex items-center justify-center gap-2 py-3 font-medium text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700'
 										>
 											<Copy className='w-4 h-4' />
-											Copy Code
+											{t('vouchers.copyCode')}
 										</button>
 
 										<button
@@ -187,12 +192,12 @@ const VoucherCard = () => {
 											receiveMutation.variables === voucher.voucherID ? (
 												<>
 													<Loader2 className='w-4 h-4 animate-spin' />
-													Getting...
+													{t('vouchers.getting')}
 												</>
 											) : (
 												<>
 													<Gift className='w-4 h-4' />
-													Get Voucher
+													{t('vouchers.getVoucher')}
 												</>
 											)}
 										</button>

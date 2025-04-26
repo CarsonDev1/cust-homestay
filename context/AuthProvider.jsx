@@ -11,13 +11,13 @@ const AuthContext = createContext(undefined);
 export const AuthProvider = ({ children }) => {
 	const router = useRouter();
 	const [isAuthenticated, setIsAuthenticated] = useState(
-		typeof window !== 'undefined' && !!localStorage.getItem('accessToken')
+		typeof window !== 'undefined' && !!sessionStorage.getItem('accessToken')
 	);
 
 	const login = ({ accessToken, refreshToken }) => {
 		if (typeof window !== 'undefined') {
-			localStorage.setItem('accessToken', accessToken);
-			localStorage.setItem('refreshToken', refreshToken);
+			sessionStorage.setItem('accessToken', accessToken);
+			sessionStorage.setItem('refreshToken', refreshToken);
 			setIsAuthenticated(true);
 			refetch();
 		}
@@ -25,8 +25,8 @@ export const AuthProvider = ({ children }) => {
 
 	const logout = () => {
 		if (typeof window !== 'undefined') {
-			localStorage.removeItem('accessToken');
-			localStorage.removeItem('refreshToken');
+			sessionStorage.removeItem('accessToken');
+			sessionStorage.removeItem('refreshToken');
 			setIsAuthenticated(false);
 			router.push('/auth/login');
 		}

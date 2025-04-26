@@ -23,8 +23,7 @@
 	"bookyourstay": "Book your stay",
 	"selectdatespayment": "Select dates and payment method",
 	"availabledates": "Available Dates",
-	"amenities": "Amenities",
-	"facilities": "Facilities",
+	"amenitiesLabel": "Amenities",
 	"aboutthisplace": "About this place",
 	"guestreviews": "Guest Reviews",
 	"applyvoucher": "Apply Voucher",
@@ -41,6 +40,97 @@
 	"banner": {
 		"title": "The Greatest Outdoors",
 		"description": "Wishlists curated by Homestay",
-		"buttonText": "Get Inspired"
+		"buttonText": "Get Inspired",
+		"heading": "Not sure where to go? Perfect."
+	},
+	"footer": {
+		"about": {
+			"title": "About HomeStay",
+			"description": "Find perfect homestays for your travels. We connect travelers with unique accommodations for authentic experiences around the world."
+		},
+		"usefulLinks": {
+			"title": "Useful Links",
+			"browseHomestays": "Browse Homestays",
+			"aboutUs": "About Us",
+			"blogNews": "Blog & News",
+			"faqs": "FAQs",
+			"privacyPolicy": "Privacy Policy",
+			"termsConditions": "Terms & Conditions"
+		},
+		"hostWithUs": {
+			"title": "Host with Us",
+			"listProperty": "List Your Property",
+			"hostResources": "Host Resources",
+			"hostingGuidelines": "Hosting Guidelines",
+			"responsibleHosting": "Responsible Hosting",
+			"becomeHost": "Become a Host"
+		},
+		"contactUs": {
+			"title": "Contact Us",
+			"address": "123 Main Street, City Center, Country, 12345",
+			"phone": "+1 234 567 8900",
+			"email": "support@homestay.com",
+			"newsletter": "Subscribe to our newsletter",
+			"emailPlaceholder": "Your email",
+			"send": "Send"
+		},
+		"language": "English",
+		"currency": "USD",
+		"copyright": "All rights reserved."
+	},
+	"vouchers": {
+		"loading": "Loading vouchers...",
+		"errorLoading": "Error loading vouchers. Please try again later.",
+		"noVouchers": "No vouchers available at the moment. Please check back later.",
+		"voucherImage": "Voucher image",
+		"off": "OFF",
+		"discountVoucher": "Discount Voucher",
+		"validFrom": "Valid from",
+		"validUntil": "Valid until",
+		"discount": "Discount",
+		"copyCode": "Copy Code",
+		"getVoucher": "Get Voucher",
+		"getting": "Getting...",
+		"receiveSuccess": "Voucher received successfully!",
+		"receiveFailed": "Failed to receive voucher",
+		"codeCopied": "Voucher code {{code}} copied to clipboard!",
+		"copyFailed": "Failed to copy voucher code",
+		"loginRequired": "Please login to receive vouchers",
+		"invalidDate": "Invalid date"
+	},
+	"amenities": {
+		"popular": "Popular",
+		"amenities": "Amenities",
+		"description": "Enjoy these top features available in our homestays for your comfort and convenience",
+		"errorLoading": "Failed to load amenities. Please try again later.",
+		"noAmenities": "No amenities available at this time.",
+		"availableIn": "Available in most homestays"
+	},
+	"facilities": {
+		"nearby": "Nearby",
+		"facilities": "Facilities",
+		"description": "Discover convenient amenities and attractions close to our homestays",
+		"errorLoading": "Something went wrong while loading facilities. Please try again.",
+		"noFacilities": "No facilities available at this time.",
+		"noDescription": "No description available"
+	},
+	"homestay": {
+		"search": "Search",
+		"price": "Price",
+		"minimumPrice": "Minimum Price",
+		"maximumPrice": "Maximum Price",
+		"standard": "Standard",
+		"loadingAmenities": "Loading amenities...",
+		"errorLoadingAmenities": "Error loading amenities",
+		"loadingHomestays": "Loading homestays...",
+		"errorLoadingData": "Error Loading Data",
+		"couldNotLoadListings": "Could not load homestay listings.",
+		"homestayImage": "homestay image",
+		"booked": "Booked",
+		"location": "Location",
+		"decommission": "Decommission",
+		"viewDetails": "View Details",
+		"noResultsFound": "No Results Found",
+		"noResultsMatch": "No results match your search criteria."
 	}
 }

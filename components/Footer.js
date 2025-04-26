@@ -3,19 +3,20 @@ import Link from 'next/link';
 import { Globe, DollarSign, Facebook, Twitter, Instagram, MapPin, Mail, Phone, ChevronRight } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import { Button } from './components/ui/button';
+import { useTranslation } from 'next-i18next';
 
 const Footer = () => {
+	const { t } = useTranslation('common');
+	const currentYear = new Date().getFullYear();
+
 	return (
 		<footer className='text-gray-600 bg-white border-t border-gray-100 sec-com'>
 			<div className='container-lg'>
-				<div className='grid grid-cols-1 gap-8 mb-8 md:grid-cols-2 lg:grid-cols-4'>
+				<div className='grid grid-cols-1 gap-8 mb-8 md:grid-cols-2 lg:grid-cols-3'>
 					{/* About Section */}
 					<div>
-						<h2 className='mb-4 text-lg font-bold text-gray-800'>About HomeStay</h2>
-						<p className='mb-4 text-sm leading-relaxed text-gray-500'>
-							Find perfect homestays for your travels. We connect travelers with unique accommodations for
-							authentic experiences around the world.
-						</p>
+						<h2 className='mb-4 text-lg font-bold text-gray-800'>{t('footer.about.title')}</h2>
+						<p className='mb-4 text-sm leading-relaxed text-gray-500'>{t('footer.about.description')}</p>
 						<div className='flex items-center mt-6 space-x-4'>
 							<a href='#' className='text-gray-400 transition-colors hover:text-blue-600'>
 								<Facebook size={20} />
@@ -31,7 +32,7 @@ const Footer = () => {
 
 					{/* Useful Links */}
 					<div>
-						<h2 className='mb-4 text-lg font-bold text-gray-800'>Useful Links</h2>
+						<h2 className='mb-4 text-lg font-bold text-gray-800'>{t('footer.usefulLinks.title')}</h2>
 						<ul className='space-y-2'>
 							<li>
 								<Link
@@ -42,7 +43,7 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>Browse Homestays</span>
+									<span>{t('footer.usefulLinks.browseHomestays')}</span>
 								</Link>
 							</li>
 							<li>
@@ -51,7 +52,7 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>About Us</span>
+									<span>{t('footer.usefulLinks.aboutUs')}</span>
 								</Link>
 							</li>
 							<li>
@@ -60,7 +61,7 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>Blog & News</span>
+									<span>{t('footer.usefulLinks.blogNews')}</span>
 								</Link>
 							</li>
 							<li>
@@ -69,7 +70,7 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>FAQs</span>
+									<span>{t('footer.usefulLinks.faqs')}</span>
 								</Link>
 							</li>
 							<li>
@@ -78,7 +79,7 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>Privacy Policy</span>
+									<span>{t('footer.usefulLinks.privacyPolicy')}</span>
 								</Link>
 							</li>
 							<li>
@@ -87,15 +88,15 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>Terms & Conditions</span>
+									<span>{t('footer.usefulLinks.termsConditions')}</span>
 								</Link>
 							</li>
 						</ul>
 					</div>
 
 					{/* Host Section */}
-					<div>
-						<h2 className='mb-4 text-lg font-bold text-gray-800'>Host with Us</h2>
+					{/* <div>
+						<h2 className='mb-4 text-lg font-bold text-gray-800'>{t('footer.hostWithUs.title')}</h2>
 						<ul className='space-y-2'>
 							<li>
 								<Link href='#' className='flex items-center text-gray-500 hover:text-blue-600 group'>
@@ -103,7 +104,7 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>List Your Property</span>
+									<span>{t('footer.hostWithUs.listProperty')}</span>
 								</Link>
 							</li>
 							<li>
@@ -112,7 +113,7 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>Host Resources</span>
+									<span>{t('footer.hostWithUs.hostResources')}</span>
 								</Link>
 							</li>
 							<li>
@@ -121,7 +122,7 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>Hosting Guidelines</span>
+									<span>{t('footer.hostWithUs.hostingGuidelines')}</span>
 								</Link>
 							</li>
 							<li>
@@ -130,40 +131,44 @@ const Footer = () => {
 										size={16}
 										className='mr-2 transition-opacity opacity-0 group-hover:opacity-100'
 									/>
-									<span>Responsible Hosting</span>
+									<span>{t('footer.hostWithUs.responsibleHosting')}</span>
 								</Link>
 							</li>
 						</ul>
-						<Button className='mt-4 bg-blue-600 hover:bg-blue-700'>Become a Host</Button>
-					</div>
+						<Button className='mt-4 bg-blue-600 hover:bg-blue-700'>
+							{t('footer.hostWithUs.becomeHost')}
+						</Button>
+					</div> */}
 
 					{/* Contact Section */}
 					<div>
-						<h2 className='mb-4 text-lg font-bold text-gray-800'>Contact Us</h2>
+						<h2 className='mb-4 text-lg font-bold text-gray-800'>{t('footer.contactUs.title')}</h2>
 						<ul className='space-y-3'>
 							<li className='flex items-start'>
 								<MapPin className='w-5 h-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0' />
-								<span className='text-gray-500'>123 Main Street, City Center, Country, 12345</span>
+								<span className='text-gray-500'>{t('footer.contactUs.address')}</span>
 							</li>
 							<li className='flex items-center'>
 								<Phone className='flex-shrink-0 w-5 h-5 mr-3 text-blue-600' />
-								<span className='text-gray-500'>+1 234 567 8900</span>
+								<span className='text-gray-500'>{t('footer.contactUs.phone')}</span>
 							</li>
 							<li className='flex items-center'>
 								<Mail className='flex-shrink-0 w-5 h-5 mr-3 text-blue-600' />
-								<span className='text-gray-500'>support@homestay.com</span>
+								<span className='text-gray-500'>{t('footer.contactUs.email')}</span>
 							</li>
 						</ul>
 						<div className='mt-6'>
-							<h3 className='mb-2 text-sm font-semibold text-gray-800'>Subscribe to our newsletter</h3>
+							<h3 className='mb-2 text-sm font-semibold text-gray-800'>
+								{t('footer.contactUs.newsletter')}
+							</h3>
 							<div className='flex'>
 								<input
 									type='email'
-									placeholder='Your email'
+									placeholder={t('footer.contactUs.emailPlaceholder')}
 									className='w-full px-3 py-2 text-sm text-gray-700 border border-gray-200 bg-gray-50 rounded-l-md focus:outline-none focus:ring-1 focus:ring-blue-500'
 								/>
 								<button className='px-3 py-2 text-white transition-colors bg-blue-600 hover:bg-blue-700 rounded-r-md'>
-									Send
+									{t('footer.contactUs.send')}
 								</button>
 							</div>
 						</div>
@@ -172,20 +177,20 @@ const Footer = () => {
 
 				{/* Footer Bottom */}
 				<div className='flex flex-col items-center justify-between pt-8 mt-8 border-t border-gray-100 md:flex-row'>
-					<div className='flex items-center mb-4 space-x-4 md:mb-0'>
+					{/* <div className='flex items-center mb-4 space-x-4 md:mb-0'>
 						<ThemeToggle />
 						<div className='flex items-center text-gray-500 cursor-pointer hover:text-gray-700'>
 							<Globe className='w-4 h-4 mr-1' />
-							<span className='text-sm'>English</span>
+							<span className='text-sm'>{t('footer.language')}</span>
 						</div>
 						<div className='flex items-center text-gray-500 cursor-pointer hover:text-gray-700'>
 							<DollarSign className='w-4 h-4 mr-1' />
-							<span className='text-sm'>USD</span>
+							<span className='text-sm'>{t('footer.currency')}</span>
 						</div>
-					</div>
+					</div> */}
 
 					<p className='text-sm text-gray-400'>
-						&copy; {new Date().getFullYear()} HomeStay. All rights reserved.
+						&copy; {currentYear} HomeStay. {t('footer.copyright')}
 					</p>
 				</div>
 			</div>
