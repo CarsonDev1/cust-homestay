@@ -734,8 +734,8 @@ const Homestay = () => {
 							<div className='flex items-center justify-between mb-2'>
 								<h3 className='text-lg font-medium'>Price Range</h3>
 								<span className='text-sm text-gray-500'>
-									${filters.priceRange[0]} -{' '}
-									{filters.priceRange[1] === 10000 ? 'Unlimited' : `$${filters.priceRange[1]}`}
+									{`${filters.priceRange[0]} VND`} -
+									{filters.priceRange[1] === 10000 ? 'Unlimited' : `${filters.priceRange[1]}`} VND
 								</span>
 							</div>
 							<Slider
@@ -747,7 +747,7 @@ const Homestay = () => {
 								className='w-full'
 							/>
 							<div className='flex justify-between mt-2 text-sm text-gray-600'>
-								<span>$0</span>
+								<span>0 VND</span>
 								<span>Unlimited</span>
 							</div>
 						</div>
@@ -948,7 +948,7 @@ const Homestay = () => {
 													<span className='font-medium text-gray-700'>Today's Rate:</span>
 													{priceForToday !== null ? (
 														<span className='text-xl font-bold text-green-600'>
-															${priceForToday.toLocaleString()}
+															{priceForToday.toLocaleString()} VND
 														</span>
 													) : (
 														<span className='px-2 py-1 text-sm text-red-600 bg-red-100 rounded'>

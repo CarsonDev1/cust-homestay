@@ -144,7 +144,7 @@ const Post = () => {
 												</Link>
 											</div>
 										</div>
-										<div className='p-4'>
+										<div className='flex flex-col justify-between p-4'>
 											<div className='flex items-center justify-between mb-2'>
 												<h2 className='text-lg font-semibold text-gray-800 line-clamp-1'>
 													{post.title}
